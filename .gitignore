@@ -1,0 +1,40 @@
+# Dependences
+node_modules/
+.pnp
+.pnp.js
+
+# Build / sorties
+dist/
+build/
+.next/
+out/
+
+# Environnement
+.env
+.env.local
+.env.*.local
+*.env
+
+# Outils internes (ne jamais versionner)
+.claude/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Couverture de tests
+coverage/
+.nyc_output/
+
+# Editeurs / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+Thumbs.db
+
+# Prisma local
+backend/prisma/*.db
