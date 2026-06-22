@@ -29,7 +29,6 @@ tracking, and role based dashboards.
 ├── backend/         NestJS, REST API, PostgreSQL (Prisma)
 ├── frontend/        Next.js, role based interfaces
 ├── docs/            Cross cutting documentation
-├── CLAUDE.md        Project development rules
 ├── README.md        This file
 ├── LICENSE          MIT license
 └── package.json     Workspaces configuration
