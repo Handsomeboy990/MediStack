@@ -1,24 +1,26 @@
 import Link from 'next/link';
-import { AlertTriangle, CheckCircle2, Receipt, Shield, Stethoscope, TrendingUp, XCircle } from 'lucide-react';
+import { AlertTriangle, Receipt, Shield, Stethoscope, TrendingUp } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { KpiCard } from '@/components/kpi-card';
 import { FACTURES, ANNULATIONS, fmt } from '@/lib/mock-data';
 
 const today = '2026-06-23';
 const facs = FACTURES.filter((f) => f.date === today);
 const totalJour = facs.filter((f) => f.statut === 'PAYE').reduce((s, f) => s + f.net, 0);
+const enAttenteAnnul = ANNULATIONS.filter((a) => a.statut === 'EN_ATTENTE').length;
 
 const kpis = [
-  { label: 'Recette du jour', value: fmt(totalJour), tone: 'text-primary' },
-  { label: 'Factures payées', value: String(facs.filter((f) => f.statut === 'PAYE').length), tone: 'text-emerald-600' },
-  { label: 'Partielles', value: String(facs.filter((f) => f.statut === 'PARTIEL').length), tone: 'text-amber-600' },
-  { label: 'Annulations en attente', value: String(ANNULATIONS.filter((a) => a.statut === 'EN_ATTENTE').length), tone: 'text-rose-600' },
+  { label: 'Recette du jour', value: fmt(totalJour), tone: 'primary' as const, hint: 'Net encaissé' },
+  { label: 'Factures payées', value: String(facs.filter((f) => f.statut === 'PAYE').length), tone: 'success' as const, hint: 'Aujourd’hui' },
+  { label: 'Partielles', value: String(facs.filter((f) => f.statut === 'PARTIEL').length), tone: 'warning' as const, hint: 'Solde restant' },
+  { label: 'Annulations en attente', value: String(enAttenteAnnul), tone: 'danger' as const, hint: 'À traiter' },
 ];
 
 const navCards = [
   { href: '/cashier-manager/factures', label: 'Liste des factures', desc: 'Toutes les factures du centre', icon: Receipt },
-  { href: '/cashier-manager/annulations', label: 'Annulations', desc: `${ANNULATIONS.filter((a) => a.statut === 'EN_ATTENTE').length} en attente`, icon: AlertTriangle },
+  { href: '/cashier-manager/annulations', label: 'Annulations', desc: `${enAttenteAnnul} en attente`, icon: AlertTriangle },
   { href: '/cashier-manager/recette', label: 'Recette', desc: 'Globale et par caissier', icon: TrendingUp },
   { href: '/cashier-manager/prestations', label: 'Prestations', desc: 'Gérer le catalogue', icon: Stethoscope },
   { href: '/cashier-manager/assurances', label: 'Assurances', desc: 'Organismes et taux', icon: Shield },
@@ -33,14 +35,7 @@ export default function CashierManagerPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {kpis.map((k) => (
-          <Card key={k.label}>
-            <CardContent className="p-5">
-              <p className="text-xs text-muted-foreground">{k.label}</p>
-              <p className={`mt-1 text-2xl font-bold ${k.tone}`}>{k.value}</p>
-            </CardContent>
-          </Card>
-        ))}
+        {kpis.map((k) => <KpiCard key={k.label} label={k.label} value={k.value} tone={k.tone} hint={k.hint} />)}
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
@@ -68,7 +63,7 @@ export default function CashierManagerPage() {
         <CardHeader><CardTitle className="text-base">Activité récente</CardTitle></CardHeader>
         <CardContent className="space-y-2">
           {FACTURES.slice(0, 4).map((f) => (
-            <Link key={f.id} href={`/cashier-manager/factures`}>
+            <Link key={f.id} href="/cashier-manager/factures">
               <div className="flex items-center justify-between rounded-xl border border-border p-3 transition hover:bg-muted/30">
                 <div>
                   <p className="text-sm font-medium">{f.patient}</p>
