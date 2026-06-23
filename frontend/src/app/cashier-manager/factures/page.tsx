@@ -48,7 +48,7 @@ export default function FacturesManagerPage() {
         </CardHeader>
         <CardContent className="space-y-2">
           {filtered.map((f) => (
-            <Link key={f.id} href={`/cashier/factures/${f.id}`}>
+            <Link key={f.id} href={`/cashier-manager/factures/${f.id}`}>
               <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border p-4 transition hover:border-primary hover:bg-muted/30">
                 <div>
                   <p className="font-semibold">{f.patient}</p>

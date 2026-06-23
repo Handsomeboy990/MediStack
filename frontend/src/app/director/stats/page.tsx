@@ -8,10 +8,11 @@ const totalRevenu = FACTURES.filter((f) => f.statut === 'PAYE').reduce((s, f) =>
 // Revenue par spécialité (approximé depuis les prestations des factures)
 const specMap: Record<string, number> = {};
 FACTURES.filter((f) => f.statut === 'PAYE').forEach((f) => {
+  const ratio = f.montantBrut > 0 ? f.net / f.montantBrut : 1;
   f.lignes.forEach((l) => {
     const presta = PRESTATIONS.find((p) => p.libelle === l.libelle);
     const spec = presta?.specialite ?? 'Autre';
-    specMap[spec] = (specMap[spec] ?? 0) + l.qte * l.pu;
+    specMap[spec] = (specMap[spec] ?? 0) + l.qte * l.pu * ratio;
   });
 });
 

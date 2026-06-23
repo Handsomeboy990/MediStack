@@ -22,6 +22,7 @@ export default function NouvelleFacturePage() {
   const [newLibelle, setNewLibelle] = useState('');
   const [newQte, setNewQte] = useState(1);
   const [newPu, setNewPu] = useState(0);
+  const [selectedPrestationValue, setSelectedPrestationValue] = useState('');
 
   const patient = PATIENTS.find((p) => p.id === patientId) ?? PATIENTS[0];
   const total = lignes.reduce((s, l) => s + l.qte * l.pu, 0);
@@ -34,6 +35,7 @@ export default function NouvelleFacturePage() {
       setNewLibelle('');
       setNewQte(1);
       setNewPu(0);
+      setSelectedPrestationValue('');
     }
   };
 
@@ -112,7 +114,9 @@ export default function NouvelleFacturePage() {
               <div className="flex gap-2 rounded-xl border border-dashed border-border p-3">
                 <select
                   className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  value={selectedPrestationValue}
                   onChange={(e) => {
+                    setSelectedPrestationValue(e.target.value);
                     const p = PRESTATIONS.find((pr) => pr.libelle === e.target.value);
                     if (p) { setNewLibelle(p.libelle); setNewPu(p.tarif); }
                   }}

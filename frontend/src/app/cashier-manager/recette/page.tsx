@@ -10,7 +10,7 @@ const especes = facs.filter((f) => f.modePaiement === 'ESPECES').reduce((s, f) =
 const mobile = facs.filter((f) => f.modePaiement === 'MOBILE').reduce((s, f) => s + f.net, 0);
 const mixte = facs.filter((f) => f.modePaiement === 'MIXTE').reduce((s, f) => s + f.net, 0);
 
-const agents = ['Ahouansou B.', 'Codjo M.'];
+const agents = [...new Set(facs.map((f) => f.agent))]
 
 export default function RecetteManagerPage() {
   return (
