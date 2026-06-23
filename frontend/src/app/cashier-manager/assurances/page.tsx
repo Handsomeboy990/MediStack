@@ -8,8 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SearchableSelectField } from '@/components/searchable-select';
 import { ASSURANCES } from '@/lib/mock-data';
+
+const statutOptions = [
+  { value: 'actif', label: 'Actif' },
+  { value: 'inactif', label: 'Inactif' },
+];
 
 export default function AssurancesPage() {
   return (
@@ -67,15 +72,7 @@ export default function AssurancesPage() {
                       <div className="space-y-1.5"><Label>Contact</Label><Input defaultValue={a.contact} /></div>
                       <div className="space-y-1.5">
                         <Label>Statut</Label>
-                        <Select defaultValue={a.actif ? 'actif' : 'inactif'}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="actif">Actif</SelectItem>
-                            <SelectItem value="inactif">Inactif</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <SearchableSelectField options={statutOptions} defaultValue={a.actif ? 'actif' : 'inactif'} />
                       </div>
                     </div>
                     <DialogFooter>

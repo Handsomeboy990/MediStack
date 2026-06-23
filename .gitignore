@@ -8,6 +8,7 @@ dist/
 build/
 .next/
 out/
+*.tsbuildinfo
 
 # Environnement
 .env
@@ -40,3 +41,5 @@ Thumbs.db
 backend/prisma/*.db
 
 CLAUDE.md
+
+redesign/

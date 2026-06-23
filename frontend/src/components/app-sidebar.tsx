@@ -22,19 +22,19 @@ function AppSidebar() {
     <Sidebar collapsible="icon" className="h-screen md:sticky md:top-0 bg-[hsl(var(--sidebar-background))] text-primary-foreground">
       <SidebarHeader className="border-b border-white/10 pb-4">
         <div className="flex items-center gap-3 px-1 pt-1">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white/15">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white/20">
             <Image
               src="/logo-icone.png"
               alt="MediTrace"
-              width={36}
-              height={36}
+              width={48}
+              height={48}
               className="h-full w-full object-contain"
               priority
             />
           </div>
           <div className="group-data-[state=collapsed]/sidebar:hidden overflow-hidden">
-            <p className="truncate text-sm font-bold text-primary-foreground">MediTrace</p>
-            <p className="truncate text-xs text-primary-foreground/60">{config?.label ?? 'Gestion clinique'}</p>
+            <p className="truncate text-lg font-extrabold tracking-tight text-white">MediTrace</p>
+            <p className="truncate text-sm font-medium text-white/80">{config?.label ?? 'Gestion clinique'}</p>
           </div>
         </div>
       </SidebarHeader>
@@ -55,7 +55,7 @@ function AppSidebar() {
                     <SidebarMenuItem key={item.href}>
                       <SidebarMenuButton asChild isActive={isActive}>
                         <Link href={item.href}>
-                          <Icon className="h-4 w-4 shrink-0" />
+                          <Icon className="h-5 w-5 shrink-0" />
                           <span className="group-data-[state=collapsed]/sidebar:hidden">{item.label}</span>
                         </Link>
                       </SidebarMenuButton>
@@ -77,7 +77,7 @@ function AppSidebar() {
                     <SidebarMenuItem key={roleHref}>
                       <SidebarMenuButton asChild isActive={false}>
                         <Link href={roleHref}>
-                          <Icon className="h-4 w-4 shrink-0" />
+                          <Icon className="h-5 w-5 shrink-0" />
                           <span className="group-data-[state=collapsed]/sidebar:hidden">{cfg.label}</span>
                         </Link>
                       </SidebarMenuButton>

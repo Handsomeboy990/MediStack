@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, Printer } from 'lucide-react';
+import { ArrowLeft, Printer, Receipt } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { FACTURES, STATUT_LABELS, STATUT_VARIANTS, fmt } from '@/lib/mock-data';
+import { printFacture, printTicket } from '@/lib/print';
 
 export default function DetailFacturePage({ params }: { params: { id: string } }) {
   const f = FACTURES.find((fc) => fc.id === params.id) ?? FACTURES[0];
@@ -34,7 +35,8 @@ export default function DetailFacturePage({ params }: { params: { id: string } }
         </div>
         <div className="flex items-center gap-2">
           <Badge variant={STATUT_VARIANTS[f.statut]}>{STATUT_LABELS[f.statut]}</Badge>
-          <Button variant="outline" size="sm" className="gap-2"><Printer className="h-4 w-4" />Imprimer</Button>
+          <Button variant="outline" size="sm" className="gap-2" onClick={() => printTicket(f)}><Receipt className="h-4 w-4" />Ticket</Button>
+          <Button variant="brand" size="sm" className="gap-2" onClick={() => printFacture(f)}><Printer className="h-4 w-4" />Imprimer la facture</Button>
         </div>
       </div>
 

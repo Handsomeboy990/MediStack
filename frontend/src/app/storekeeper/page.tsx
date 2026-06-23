@@ -1,88 +1,101 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { AlertTriangle, ArrowDown, ArrowLeftRight, ArrowUp, RefreshCw } from 'lucide-react';
+import { AlertTriangle, Printer } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
+import { KpiCard } from '@/components/kpi-card';
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { STOCK_ARTICLES, fmt } from '@/lib/mock-data';
+import { printBonCommande } from '@/lib/print';
+
+function stockBadge(q: number, s: number) {
+  if (q === 0) return <Badge variant="destructive">Rupture</Badge>;
+  if (q <= s) return <Badge variant="warning">Seuil</Badge>;
+  return <Badge variant="success">OK</Badge>;
+}
 
 const alerts = STOCK_ARTICLES.filter((a) => a.quantite <= a.seuil);
 const ruptures = STOCK_ARTICLES.filter((a) => a.quantite === 0);
-
-const navCards = [
-  { href: '/storekeeper/entree', label: 'Entrée de stock', desc: 'Enregistrer une réception', icon: ArrowDown },
-  { href: '/storekeeper/ajustement', label: 'Inventaire', desc: 'Corriger un écart', icon: RefreshCw },
-  { href: '/storekeeper/transferts', label: 'Transferts', desc: 'Vers la pharmacie', icon: ArrowLeftRight },
-  { href: '/storekeeper/alertes', label: 'Alertes', desc: `${alerts.length} article(s) en tension`, icon: AlertTriangle },
-];
-
-function stockVariant(q: number, s: number) {
-  if (q === 0) return 'destructive' as const;
-  if (q <= s) return 'warning' as const;
-  return 'success' as const;
-}
+const valeurStock = STOCK_ARTICLES.reduce((s, a) => s + a.quantite * a.pu, 0);
 
 export default function StorekeeperPage() {
+  const router = useRouter();
+
+  const commander = () =>
+    printBonCommande(
+      alerts.map((a) => ({ code: a.code, libelle: a.libelle, unite: a.unite, qte: Math.max(a.seuil * 2 - a.quantite, a.seuil), pu: a.pu })),
+    );
+
   return (
-    <main className="space-y-6">
-      <div>
-        <h1 className="text-xl font-bold text-foreground">Magasin central</h1>
-        <p className="text-sm text-muted-foreground">{STOCK_ARTICLES.length} articles · {ruptures.length} rupture(s) · {alerts.length - ruptures.length} sous seuil</p>
+    <main className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-bold text-foreground">Magasin central</h1>
+          <p className="text-sm text-muted-foreground">État du stock au 23 juin 2026</p>
+        </div>
+        <Button variant="brand" className="gap-2" onClick={commander} disabled={alerts.length === 0}>
+          <Printer className="h-4 w-4" />Bon de commande
+        </Button>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <KpiCard label="Articles" value={String(STOCK_ARTICLES.length)} tone="neutral" hint="Références au catalogue" />
+        <KpiCard label="Ruptures" value={String(ruptures.length)} tone="danger" hint="Quantité nulle" />
+        <KpiCard label="Sous seuil" value={String(alerts.length - ruptures.length)} tone="warning" hint="À réapprovisionner" />
+        <KpiCard label="Valeur du stock" value={fmt(valeurStock)} tone="primary" hint="Au prix unitaire" />
       </div>
 
       {alerts.length > 0 && (
-        <div className="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
+        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
           <AlertTriangle className="h-5 w-5 text-amber-600" />
-          <div>
-            <p className="font-semibold text-amber-900">{alerts.length} article(s) en tension</p>
-            <p className="text-sm text-amber-700">{alerts.map((a) => a.libelle).join(', ')}</p>
-          </div>
-          <Link href="/storekeeper/alertes" className="ml-auto text-sm font-medium text-amber-700 hover:underline">Voir →</Link>
+          <p className="text-sm font-medium text-amber-900">{alerts.length} article(s) en tension</p>
+          <Link href="/storekeeper/alertes" className="ml-auto text-sm font-medium text-amber-700 hover:underline">Voir les alertes</Link>
         </div>
       )}
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {navCards.map((c) => {
-          const Icon = c.icon;
-          return (
-            <Link key={c.href} href={c.href}>
-              <Card className="h-full cursor-pointer transition hover:border-primary hover:shadow-sm">
-                <CardContent className="flex items-center gap-4 p-5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                    <Icon className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-semibold">{c.label}</p>
-                    <p className="text-xs text-muted-foreground">{c.desc}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          );
-        })}
-      </div>
-
-      <Card>
+      <Card className="overflow-hidden">
         <CardHeader><CardTitle className="text-base">État du stock</CardTitle></CardHeader>
-        <CardContent className="space-y-2">
-          {STOCK_ARTICLES.map((a) => (
-            <Link key={a.id} href={`/storekeeper/articles/${a.id}`}>
-              <div className="flex items-center justify-between rounded-xl border border-border p-3 transition hover:border-primary hover:bg-muted/30">
-                <div>
-                  <p className="text-sm font-medium">{a.libelle}</p>
-                  <p className="text-xs text-muted-foreground">{a.code} · {a.unite} · {fmt(a.pu)}</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <p className="text-lg font-bold">{a.quantite}</p>
-                  <Badge variant={stockVariant(a.quantite, a.seuil)}>
-                    {a.quantite === 0 ? 'Rupture' : a.quantite <= a.seuil ? 'Seuil' : 'OK'}
-                  </Badge>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Article</TableHead>
+              <TableHead>Catégorie</TableHead>
+              <TableHead className="text-right">Qté</TableHead>
+              <TableHead className="text-right">Seuil</TableHead>
+              <TableHead className="text-right">PU</TableHead>
+              <TableHead className="text-right">Valeur</TableHead>
+              <TableHead>Statut</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {STOCK_ARTICLES.map((a) => (
+              <TableRow key={a.id} className="cursor-pointer" onClick={() => router.push(`/storekeeper/articles/${a.id}`)}>
+                <TableCell>
+                  <p className="font-medium">{a.libelle}</p>
+                  <p className="text-xs text-muted-foreground">{a.code} · {a.unite}</p>
+                </TableCell>
+                <TableCell className="text-muted-foreground">{a.categorie}</TableCell>
+                <TableCell className="text-right font-bold">{a.quantite}</TableCell>
+                <TableCell className="text-right text-muted-foreground">{a.seuil}</TableCell>
+                <TableCell className="text-right text-muted-foreground">{fmt(a.pu)}</TableCell>
+                <TableCell className="text-right font-semibold">{fmt(a.quantite * a.pu)}</TableCell>
+                <TableCell>{stockBadge(a.quantite, a.seuil)}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <TableFooter>
+            <TableRow className="hover:bg-transparent">
+              <TableCell colSpan={5} className="text-xs uppercase text-muted-foreground">Valeur totale</TableCell>
+              <TableCell className="text-right text-primary">{fmt(valeurStock)}</TableCell>
+              <TableCell />
+            </TableRow>
+          </TableFooter>
+        </Table>
       </Card>
     </main>
   );
 }
-

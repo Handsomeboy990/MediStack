@@ -1,73 +1,112 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Printer, Search } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FACTURES, STATUT_LABELS, STATUT_VARIANTS, fmt } from '@/lib/mock-data';
+import { KpiCard } from '@/components/kpi-card';
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { STATUT_LABELS, STATUT_VARIANTS, fmt } from '@/lib/mock-data';
+import { useFactures } from '@/lib/factures-store';
+import { printFacture } from '@/lib/print';
 
 const STATUTS = ['Tous', 'PAYE', 'PARTIEL', 'EN_ATTENTE', 'ANNULE'];
 
 export default function FacturesManagerPage() {
+  const router = useRouter();
   const [search, setSearch] = useState('');
   const [statut, setStatut] = useState('Tous');
+  const [dateDebut, setDateDebut] = useState('');
+  const [dateFin, setDateFin] = useState('');
+  const all = useFactures();
 
-  const filtered = FACTURES.filter((f) => {
-    const matchSearch =
-      f.patient.toLowerCase().includes(search.toLowerCase()) ||
-      f.id.toLowerCase().includes(search.toLowerCase());
+  const filtered = all.filter((f) => {
+    const matchSearch = f.patient.toLowerCase().includes(search.toLowerCase()) || f.id.toLowerCase().includes(search.toLowerCase());
     const matchStatut = statut === 'Tous' || f.statut === statut;
-    return matchSearch && matchStatut;
+    const matchDate = (!dateDebut || f.date >= dateDebut) && (!dateFin || f.date <= dateFin);
+    return matchSearch && matchStatut && matchDate;
   });
 
+  const totalFacture = filtered.reduce((s, f) => s + f.net, 0);
+  const totalVerse = filtered.reduce((s, f) => s + f.verse, 0);
+  const totalAssurance = filtered.reduce((s, f) => s + f.assurancePrise, 0);
+
   return (
-    <main className="space-y-6">
+    <main className="space-y-4">
       <h1 className="text-lg font-bold">Liste des factures</h1>
 
-      <div className="flex flex-wrap gap-3">
-        <Input
-          placeholder="Rechercher un patient ou une référence…"
-          className="max-w-sm"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <Select value={statut} onValueChange={setStatut}>
-          <SelectTrigger className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {STATUTS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-          </SelectContent>
-        </Select>
+      <div className="grid gap-4 sm:grid-cols-3">
+        <KpiCard label="Net facturé" value={fmt(totalFacture)} tone="primary" hint={`${filtered.length} facture(s)`} />
+        <KpiCard label="Encaissé" value={fmt(totalVerse)} tone="success" hint="Versé patient" />
+        <KpiCard label="Part assurance" value={fmt(totalAssurance)} tone="neutral" hint="À recouvrer" />
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">{filtered.length} facture(s)</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          {filtered.map((f) => (
-            <Link key={f.id} href={`/cashier-manager/factures/${f.id}`}>
-              <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border p-4 transition hover:border-primary hover:bg-muted/30">
-                <div>
-                  <p className="font-semibold">{f.patient}</p>
-                  <p className="text-xs text-muted-foreground">{f.id} · {f.date} · {f.agent}</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="text-right">
-                    <p className="text-sm font-bold text-primary">{fmt(f.net)}</p>
-                    <p className="text-xs text-muted-foreground">Versé : {fmt(f.verse)}</p>
-                  </div>
-                  <Badge variant={STATUT_VARIANTS[f.statut]}>{STATUT_LABELS[f.statut]}</Badge>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </CardContent>
+      <Card className="overflow-hidden">
+        <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input placeholder="Rechercher un patient ou une référence..." className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-muted-foreground">Du</span>
+            <Input type="date" className="w-36" value={dateDebut} onChange={(e) => setDateDebut(e.target.value)} />
+            <span className="text-xs text-muted-foreground">au</span>
+            <Input type="date" className="w-36" value={dateFin} onChange={(e) => setDateFin(e.target.value)} />
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {STATUTS.map((s) => (
+              <button key={s} onClick={() => setStatut(s)} className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ${statut === s ? 'bg-primary text-primary-foreground' : 'border border-border text-muted-foreground hover:bg-muted'}`}>
+                {s === 'Tous' ? 'Tous' : STATUT_LABELS[s as keyof typeof STATUT_LABELS]}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Référence</TableHead>
+              <TableHead>Patient</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Agent</TableHead>
+              <TableHead className="text-right">Net</TableHead>
+              <TableHead className="text-right">Versé</TableHead>
+              <TableHead>Statut</TableHead>
+              <TableHead className="text-right">Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filtered.map((f) => (
+              <TableRow key={f.id} className="cursor-pointer" onClick={() => router.push(`/cashier-manager/factures/${f.id}`)}>
+                <TableCell className="font-bold text-primary">{f.id}</TableCell>
+                <TableCell className="font-medium">{f.patient}</TableCell>
+                <TableCell className="text-muted-foreground">{f.date}</TableCell>
+                <TableCell className="text-muted-foreground">{f.agent}</TableCell>
+                <TableCell className="text-right font-semibold">{fmt(f.net)}</TableCell>
+                <TableCell className="text-right">{fmt(f.verse)}</TableCell>
+                <TableCell><Badge variant={STATUT_VARIANTS[f.statut]}>{STATUT_LABELS[f.statut]}</Badge></TableCell>
+                <TableCell className="text-right">
+                  <button onClick={(e) => { e.stopPropagation(); printFacture(f); }} className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline">
+                    <Printer className="h-3.5 w-3.5" />Imprimer
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <TableFooter>
+            <TableRow className="hover:bg-transparent">
+              <TableCell colSpan={4} className="text-xs uppercase text-muted-foreground">Totaux</TableCell>
+              <TableCell className="text-right text-primary">{fmt(totalFacture)}</TableCell>
+              <TableCell className="text-right">{fmt(totalVerse)}</TableCell>
+              <TableCell colSpan={2} />
+            </TableRow>
+          </TableFooter>
+        </Table>
+
+        {filtered.length === 0 && <p className="p-10 text-center text-sm text-muted-foreground">Aucune facture pour ces critères.</p>}
       </Card>
     </main>
   );

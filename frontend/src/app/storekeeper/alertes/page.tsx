@@ -1,67 +1,92 @@
-import Link from 'next/link';
+'use client';
+
+import { Printer } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { STOCK_ARTICLES, fmt } from '@/lib/mock-data';
+import { printBonCommande } from '@/lib/print';
 
 const alerts = STOCK_ARTICLES.filter((a) => a.quantite <= a.seuil);
+const ok = STOCK_ARTICLES.filter((a) => a.quantite > a.seuil);
 
 export default function AlertesPage() {
+  const commander = () =>
+    printBonCommande(
+      alerts.map((a) => ({ code: a.code, libelle: a.libelle, unite: a.unite, qte: Math.max(a.seuil * 2 - a.quantite, a.seuil), pu: a.pu })),
+    );
+
   return (
-    <main className="space-y-6">
-      <div>
-        <h1 className="text-lg font-bold">Alertes de rupture</h1>
-        <p className="text-sm text-muted-foreground">{alerts.length} article(s) sous le seuil de réapprovisionnement</p>
+    <main className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-lg font-bold">Alertes de rupture</h1>
+          <p className="text-sm text-muted-foreground">{alerts.length} article(s) sous le seuil</p>
+        </div>
+        <Button variant="brand" className="gap-2" onClick={commander} disabled={alerts.length === 0}>
+          <Printer className="h-4 w-4" />Bon de commande
+        </Button>
       </div>
 
-      {alerts.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-sm text-muted-foreground">
-            Aucune alerte active — tous les articles sont au-dessus du seuil.
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-3">
-          {alerts.map((a) => {
-            const isRupture = a.quantite === 0;
-            return (
-              <Card key={a.id} className={isRupture ? 'border-rose-200' : 'border-amber-200'}>
-                <CardContent className="flex items-center justify-between p-5">
-                  <div>
-                    <p className="font-semibold">{a.libelle}</p>
-                    <p className="text-xs text-muted-foreground">{a.code} · {a.unite} · {fmt(a.pu)}</p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right text-sm">
-                      <p className="text-muted-foreground">Actuel / Seuil</p>
-                      <p className={`font-bold ${isRupture ? 'text-rose-600' : 'text-amber-600'}`}>{a.quantite} / {a.seuil}</p>
-                    </div>
-                    <Badge variant={isRupture ? 'destructive' : 'warning'}>{isRupture ? 'Rupture' : 'Seuil atteint'}</Badge>
-                    <Link href="/storekeeper/entree">
-                      <Button size="sm" variant="brand" className="">Commander</Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      )}
+      <Card className="overflow-hidden">
+        <CardHeader><CardTitle className="text-sm">Articles à réapprovisionner</CardTitle></CardHeader>
+        {alerts.length === 0 ? (
+          <p className="p-10 text-center text-sm text-muted-foreground">Aucune alerte active.</p>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Article</TableHead>
+                <TableHead className="text-right">Actuel</TableHead>
+                <TableHead className="text-right">Seuil</TableHead>
+                <TableHead className="text-right">À commander</TableHead>
+                <TableHead>Statut</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {alerts.map((a) => {
+                const suggere = Math.max(a.seuil * 2 - a.quantite, a.seuil);
+                const rupture = a.quantite === 0;
+                return (
+                  <TableRow key={a.id}>
+                    <TableCell>
+                      <p className="font-medium">{a.libelle}</p>
+                      <p className="text-xs text-muted-foreground">{a.code} · {a.unite}</p>
+                    </TableCell>
+                    <TableCell className="text-right font-bold">{a.quantite}</TableCell>
+                    <TableCell className="text-right text-muted-foreground">{a.seuil}</TableCell>
+                    <TableCell className="text-right font-semibold text-primary">{suggere} {a.unite}</TableCell>
+                    <TableCell><Badge variant={rupture ? 'destructive' : 'warning'}>{rupture ? 'Rupture' : 'Seuil'}</Badge></TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        )}
+      </Card>
 
-      <Card>
-        <CardHeader><CardTitle className="text-base">Articles OK</CardTitle></CardHeader>
-        <CardContent className="space-y-2">
-          {STOCK_ARTICLES.filter((a) => a.quantite > a.seuil).map((a) => (
-            <div key={a.id} className="flex items-center justify-between rounded-xl border border-border p-3 text-sm">
-              <p className="font-medium">{a.libelle}</p>
-              <div className="flex items-center gap-3">
-                <p className="font-semibold text-primary">{a.quantite} {a.unite}(s)</p>
-                <Badge variant="success">OK</Badge>
-              </div>
-            </div>
-          ))}
-        </CardContent>
+      <Card className="overflow-hidden">
+        <CardHeader><CardTitle className="text-sm">Articles au-dessus du seuil</CardTitle></CardHeader>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Article</TableHead>
+              <TableHead className="text-right">Quantité</TableHead>
+              <TableHead>Statut</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {ok.map((a) => (
+              <TableRow key={a.id}>
+                <TableCell className="font-medium">{a.libelle}</TableCell>
+                <TableCell className="text-right">{a.quantite} {a.unite}(s)</TableCell>
+                <TableCell><Badge variant="success">OK</Badge></TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </Card>
     </main>
   );

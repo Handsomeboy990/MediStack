@@ -36,8 +36,9 @@ export const roleNavConfig: Record<string, RoleConfig> = {
     items: [
       { href: '/storekeeper', label: 'Tableau de bord', icon: LayoutDashboard },
       { href: '/storekeeper/entree', label: 'Entrée stock', icon: ArrowDown },
+      { href: '/storekeeper/transferts', label: 'Sorties / Transferts', icon: ArrowLeftRight },
       { href: '/storekeeper/ajustement', label: 'Inventaire', icon: RefreshCw },
-      { href: '/storekeeper/transferts', label: 'Transferts', icon: ArrowLeftRight },
+      { href: '/storekeeper/mouvements', label: 'Mouvements', icon: ClipboardList },
       { href: '/storekeeper/alertes', label: 'Alertes rupture', icon: AlertTriangle },
     ],
   },
@@ -59,6 +60,13 @@ export const roleNavConfig: Record<string, RoleConfig> = {
       { href: '/director/stats', label: 'Statistiques', icon: BarChart3 },
       { href: '/director/utilisateurs', label: 'Utilisateurs', icon: Users },
       { href: '/director/roles', label: 'Rôles', icon: Shield },
+      { href: '/director/magasins', label: 'Magasins / Pharmacies', icon: Warehouse },
+      { href: '/director/logs', label: 'Journal', icon: ClipboardList },
+      // L'administrateur accède à tous les espaces de l'application.
+      { href: '/cashier-manager', label: 'Espace caisse (resp.)', icon: TrendingUp },
+      { href: '/cashier', label: 'Espace caisse (agent)', icon: Receipt },
+      { href: '/storekeeper', label: 'Espace magasin', icon: Warehouse },
+      { href: '/hr', label: 'Espace RH', icon: Stethoscope },
     ],
   },
 };

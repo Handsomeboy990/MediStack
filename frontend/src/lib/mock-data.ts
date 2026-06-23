@@ -1,4 +1,16 @@
 // ─── Patients ───────────────────────────────────────────────
+// Une carte d'assurance rattachée à un patient. Un patient peut en posséder
+// plusieurs ; le choix d'une carte unique se fait au moment de la facturation.
+export type CarteAssurance = {
+  id: string;
+  nom: string;
+  societe: string;
+  numeroPolice: string;
+  numeroMatricule: string;
+  dateExpiration: string;
+  taux: number;
+};
+
 export type Patient = {
   id: string;
   nom: string;
@@ -6,20 +18,20 @@ export type Patient = {
   dateNaissance: string;
   telephone: string;
   adresse: string;
-  assurance: string | null;
-  numeroAssurance: string | null;
-  tauxCouverture: number;
   urgenceNom: string;
   urgenceTel: string;
+  cartesAssurance: CarteAssurance[];
+  nationalite?: 'BENINOIS' | 'ETRANGER';
+  npi?: string;
 };
 
 export const PATIENTS: Patient[] = [
-  { id: 'PAT-001', nom: 'Kone', prenom: 'Amina', dateNaissance: '1985-03-12', telephone: '97 00 11 22', adresse: 'Cotonou, Zongo', assurance: 'CNSS', numeroAssurance: 'CNSS-4521', tauxCouverture: 40, urgenceNom: 'Kone Ibrahim', urgenceTel: '96 22 33 44' },
-  { id: 'PAT-002', nom: 'Adodo', prenom: 'Kofi', dateNaissance: '1990-07-18', telephone: '95 33 44 55', adresse: 'Abomey-Calavi, Lot 12', assurance: null, numeroAssurance: null, tauxCouverture: 0, urgenceNom: 'Adodo Marie', urgenceTel: '97 55 66 77' },
-  { id: 'PAT-003', nom: 'Lawson', prenom: 'Adjoa', dateNaissance: '1972-11-05', telephone: '96 44 55 66', adresse: 'Porto-Novo, Tokpota', assurance: 'INAM', numeroAssurance: 'INAM-8812', tauxCouverture: 50, urgenceNom: 'Lawson Kofi', urgenceTel: '95 77 88 99' },
-  { id: 'PAT-004', nom: 'Hodonou', prenom: 'Fiacre', dateNaissance: '2001-01-22', telephone: '97 55 66 77', adresse: 'Cotonou, Akpakpa', assurance: 'SONIAM', numeroAssurance: 'SON-2234', tauxCouverture: 35, urgenceNom: 'Hodonou Agnès', urgenceTel: '96 88 99 00' },
-  { id: 'PAT-005', nom: 'Dossou', prenom: 'Emeline', dateNaissance: '1965-09-30', telephone: '95 66 77 88', adresse: 'Parakou, Centre', assurance: 'CNSS', numeroAssurance: 'CNSS-7890', tauxCouverture: 40, urgenceNom: 'Dossou Roland', urgenceTel: '97 00 11 22' },
-  { id: 'PAT-006', nom: 'Gbessi', prenom: 'Théodore', dateNaissance: '1998-05-14', telephone: '97 77 88 99', adresse: 'Cotonou, Fidjrossè', assurance: null, numeroAssurance: null, tauxCouverture: 0, urgenceNom: 'Gbessi Pierre', urgenceTel: '95 00 11 22' },
+  { id: 'PAT-001', nom: 'Kone', prenom: 'Amina', dateNaissance: '1985-03-12', telephone: '01 97 00 11 22', adresse: 'Cotonou, Zongo', urgenceNom: 'Kone Ibrahim', urgenceTel: '01 96 22 33 44', cartesAssurance: [{ id: 'CA-001', nom: 'CNSS', societe: 'Caisse Nationale de Sécurité Sociale', numeroPolice: 'POL-4521', numeroMatricule: 'CNSS-4521', dateExpiration: '2027-03-31', taux: 40 }] },
+  { id: 'PAT-002', nom: 'Adodo', prenom: 'Kofi', dateNaissance: '1990-07-18', telephone: '01 95 33 44 55', adresse: 'Abomey-Calavi, Lot 12', urgenceNom: 'Adodo Marie', urgenceTel: '01 97 55 66 77', cartesAssurance: [] },
+  { id: 'PAT-003', nom: 'Lawson', prenom: 'Adjoa', dateNaissance: '1972-11-05', telephone: '01 96 44 55 66', adresse: 'Porto-Novo, Tokpota', urgenceNom: 'Lawson Kofi', urgenceTel: '01 95 77 88 99', cartesAssurance: [{ id: 'CA-002', nom: 'INAM', societe: 'Institut National d\'Assurance Maladie', numeroPolice: 'POL-8812', numeroMatricule: 'INAM-8812', dateExpiration: '2026-12-31', taux: 50 }] },
+  { id: 'PAT-004', nom: 'Hodonou', prenom: 'Fiacre', dateNaissance: '2001-01-22', telephone: '01 97 55 66 77', adresse: 'Cotonou, Akpakpa', urgenceNom: 'Hodonou Agnès', urgenceTel: '01 96 88 99 00', cartesAssurance: [{ id: 'CA-003', nom: 'SONIAM', societe: 'Société Nationale d\'Assurance Maladie', numeroPolice: 'POL-2234', numeroMatricule: 'SON-2234', dateExpiration: '2027-06-30', taux: 35 }] },
+  { id: 'PAT-005', nom: 'Dossou', prenom: 'Emeline', dateNaissance: '1965-09-30', telephone: '01 95 66 77 88', adresse: 'Parakou, Centre', urgenceNom: 'Dossou Roland', urgenceTel: '01 97 00 11 22', cartesAssurance: [{ id: 'CA-004', nom: 'CNSS', societe: 'Caisse Nationale de Sécurité Sociale', numeroPolice: 'POL-7890', numeroMatricule: 'CNSS-7890', dateExpiration: '2027-01-31', taux: 40 }, { id: 'CA-005', nom: 'GIZ', societe: 'GIZ Assurance Santé', numeroPolice: 'POL-3310', numeroMatricule: 'GIZ-3310', dateExpiration: '2026-09-30', taux: 60 }] },
+  { id: 'PAT-006', nom: 'Gbessi', prenom: 'Théodore', dateNaissance: '1998-05-14', telephone: '01 97 77 88 99', adresse: 'Cotonou, Fidjrossè', urgenceNom: 'Gbessi Pierre', urgenceTel: '01 95 00 11 22', cartesAssurance: [] },
 ];
 
 // ─── Factures ───────────────────────────────────────────────
@@ -36,7 +48,7 @@ export type Facture = {
   verse: number;
   statut: 'PAYE' | 'PARTIEL' | 'ANNULE' | 'EN_ATTENTE';
   agent: string;
-  modePaiement: 'ESPECES' | 'MOBILE' | 'MIXTE' | null;
+  modePaiement: string | null;
   lignes: LigneFacture[];
 };
 
@@ -142,6 +154,58 @@ export const MOUVEMENTS_STOCK: MouvementStock[] = [
   { id: 'MOV-003', articleId: 'MED-002', article: 'Amoxicilline 250 mg', type: 'SORTIE', quantite: 3, date: '2026-06-23 11:05', agent: 'Hodonou F.', motif: 'Demande pharmacie' },
   { id: 'MOV-004', articleId: 'MAT-002', article: 'Gants latex M', type: 'AJUSTEMENT', quantite: -5, date: '2026-06-22 16:00', agent: 'Hodonou F.', motif: 'Inventaire physique' },
 ];
+
+// ─── Magasins et pharmacies ──────────────────────────────────
+// Le magasin central est la source de stock principale : il ne peut pas être
+// supprimé. L'administrateur gère les magasins et pharmacies secondaires.
+export type Magasin = {
+  id: string;
+  nom: string;
+  type: 'MAGASIN' | 'PHARMACIE';
+  responsable: string;
+  localisation: string;
+  central: boolean;
+};
+
+export const MAGASINS: Magasin[] = [
+  { id: 'MAG-000', nom: 'Magasin central', type: 'MAGASIN', responsable: 'Hodonou Fiacre', localisation: 'Cotonou, Siège', central: true },
+  { id: 'PHA-001', nom: 'Pharmacie principale', type: 'PHARMACIE', responsable: 'Adjovi Carine', localisation: 'Cotonou, Rez-de-chaussée', central: false },
+  { id: 'MAG-001', nom: 'Magasin annexe Calavi', type: 'MAGASIN', responsable: 'Sossou Régis', localisation: 'Abomey-Calavi', central: false },
+];
+
+// ─── Établissement et logiciel ───────────────────────────────
+// Informations de l'établissement affichées en en-tête des documents imprimés.
+// Valeurs à compléter par l'équipe ; le nom du logiciel n'apparaît qu'en pied.
+export const CLINIQUE = {
+  nom: 'Clinique MediTrust',
+  adresse: 'Lot 1234, Cotonou, Bénin',
+  telephone: '01 21 30 00 00',
+  email: 'contact@meditrust.bj',
+  ifu: 'IFU 3201900000000',
+};
+export const LOGICIEL = 'MediTrace';
+
+// ─── ANIP (simulation) ───────────────────────────────────────
+// Récupération des données d'identité par NPI. À brancher sur l'API ANIP réelle.
+export type AnipRecord = { npi: string; nom: string; prenom: string; dateNaissance: string; adresse: string };
+const ANIP_DB: AnipRecord[] = [
+  { npi: '0123456789', nom: 'Sossou', prenom: 'Marc', dateNaissance: '1988-04-12', adresse: 'Cotonou, Akpakpa' },
+  { npi: '1987654320', nom: 'Tchégnon', prenom: 'Reine', dateNaissance: '1995-09-23', adresse: 'Porto-Novo, Djassin' },
+];
+
+// Un NPI valide comporte exactement 10 chiffres.
+export function isNpiValide(npi: string) {
+  return /^\d{10}$/.test(npi.trim());
+}
+
+export function lookupNpi(npi: string): AnipRecord | null {
+  const clean = npi.trim();
+  if (!isNpiValide(clean)) return null;
+  const found = ANIP_DB.find((r) => r.npi === clean);
+  if (found) return found;
+  // Retour générique pour tout NPI valide, afin que la démo fonctionne.
+  return { npi: clean, nom: 'Aïkpé', prenom: 'Honoré', dateNaissance: '1990-01-01', adresse: 'Cotonou, Bénin' };
+}
 
 // ─── Utilisateurs ────────────────────────────────────────────
 export type Utilisateur = {

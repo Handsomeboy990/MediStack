@@ -55,7 +55,7 @@ npm run dev:frontend
 
 ## Documentation
 
-- Development rules: [CLAUDE.md](CLAUDE.md)
+- Development rules: [CONTRIBUTING.md](CONTRIBUTING.md)
 - Backend: [backend/README.md](backend/README.md) and [backend/docs/](backend/docs/)
 - Frontend: [frontend/README.md](frontend/README.md) and [frontend/docs/](frontend/docs/)
 
