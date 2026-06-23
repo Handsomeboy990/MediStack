@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SearchableSelect } from '@/components/searchable-select';
+import { NewPatientDialog } from '@/components/new-patient-dialog';
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { MEDECINS, PRESTATIONS, fmt } from '@/lib/mock-data';
 import { printFacture, printTicket, type PrintableFacture } from '@/lib/print';
@@ -32,6 +33,8 @@ export default function NouvelleFacturePage() {
   const [mode, setMode] = useState('Espèces');
   const [montantRecu, setMontantRecu] = useState('');
   const [monnaieRendue, setMonnaieRendue] = useState(true);
+  const [numeroCheque, setNumeroCheque] = useState('');
+  const [banque, setBanque] = useState('');
 
   const patient = patients.find((p) => p.id === patientId) ?? patients[0];
   const carte = patient?.cartesAssurance.find((c) => c.id === carteId);
@@ -67,7 +70,7 @@ export default function NouvelleFacturePage() {
     net,
     verse: Number(montantRecu || 0),
     statut: 'EN_ATTENTE',
-    modePaiement: mode,
+    modePaiement: mode === 'Chèque' && numeroCheque ? `Chèque ${numeroCheque}${banque ? ` (${banque})` : ''}` : mode,
   };
 
   return (
@@ -84,7 +87,14 @@ export default function NouvelleFacturePage() {
         <div className="flex w-full shrink-0 flex-col gap-4 xl:w-72">
           <div className="space-y-1.5">
             <Label>Patient</Label>
-            <SearchableSelect options={patientOptions} value={patientId} onChange={(v) => { setPatientId(v); setCarteId('aucune'); }} placeholder="Rechercher un patient..." />
+            <div className="flex gap-2">
+              <SearchableSelect className="flex-1" options={patientOptions} value={patientId} onChange={(v) => { setPatientId(v); setCarteId('aucune'); }} placeholder="Rechercher un patient..." />
+              <NewPatientDialog
+                onCreated={(id) => { setPatientId(id); setCarteId('aucune'); }}
+                trigger={<Button variant="outline" size="icon" className="shrink-0" title="Nouveau patient"><Plus className="h-4 w-4" /></Button>}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">Patient introuvable ? Ajoutez-le avec le bouton +.</p>
           </div>
 
           <Card className="overflow-hidden">
@@ -191,6 +201,12 @@ export default function NouvelleFacturePage() {
                   ))}
                 </div>
               </div>
+              {mode === 'Chèque' && (
+                <div className="grid gap-2">
+                  <Input placeholder="Numéro de chèque" value={numeroCheque} onChange={(e) => setNumeroCheque(e.target.value)} />
+                  <Input placeholder="Banque émettrice" value={banque} onChange={(e) => setBanque(e.target.value)} />
+                </div>
+              )}
               <div className="space-y-1.5">
                 <Label className="text-xs uppercase">Montant reçu</Label>
                 <Input className="no-arrows text-right text-lg font-medium" type="number" value={montantRecu} onChange={(e) => setMontantRecu(e.target.value)} placeholder="0" />
