@@ -1,17 +1,26 @@
 'use client';
 
+import { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SearchableSelect } from '@/components/searchable-select';
 import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { STOCK_ARTICLES, MOUVEMENTS_STOCK } from '@/lib/mock-data';
 
 const historique = MOUVEMENTS_STOCK.filter((m) => m.type === 'AJUSTEMENT');
+const articleOptions = STOCK_ARTICLES.map((a) => ({ value: a.id, label: a.libelle, hint: `stock ${a.quantite}` }));
+const sensOptions = [
+  { value: 'PLUS', label: 'Ajout (+)' },
+  { value: 'MINUS', label: 'Retrait (-)' },
+];
 
 export default function InventairePage() {
+  const [article, setArticle] = useState('');
+  const [sens, setSens] = useState('PLUS');
   return (
     <main className="space-y-4">
       <div>
@@ -25,23 +34,12 @@ export default function InventairePage() {
           <CardContent className="space-y-4">
             <div className="space-y-1.5">
               <Label>Article</Label>
-              <Select>
-                <SelectTrigger><SelectValue placeholder="Sélectionner un article" /></SelectTrigger>
-                <SelectContent>
-                  {STOCK_ARTICLES.map((a) => <SelectItem key={a.id} value={a.id}>{a.libelle} · stock actuel : {a.quantite}</SelectItem>)}
-                </SelectContent>
-              </Select>
+              <SearchableSelect options={articleOptions} value={article} onChange={setArticle} placeholder="Sélectionner un article" />
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label>Sens</Label>
-                <Select defaultValue="PLUS">
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="PLUS">Ajout (+)</SelectItem>
-                    <SelectItem value="MINUS">Retrait (-)</SelectItem>
-                  </SelectContent>
-                </Select>
+                <SearchableSelect options={sensOptions} value={sens} onChange={setSens} />
               </div>
               <div className="space-y-1.5">
                 <Label>Quantité</Label>

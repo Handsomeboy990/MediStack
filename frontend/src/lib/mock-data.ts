@@ -153,6 +153,24 @@ export const MOUVEMENTS_STOCK: MouvementStock[] = [
   { id: 'MOV-004', articleId: 'MAT-002', article: 'Gants latex M', type: 'AJUSTEMENT', quantite: -5, date: '2026-06-22 16:00', agent: 'Hodonou F.', motif: 'Inventaire physique' },
 ];
 
+// ─── Magasins et pharmacies ──────────────────────────────────
+// Le magasin central est la source de stock principale : il ne peut pas être
+// supprimé. L'administrateur gère les magasins et pharmacies secondaires.
+export type Magasin = {
+  id: string;
+  nom: string;
+  type: 'MAGASIN' | 'PHARMACIE';
+  responsable: string;
+  localisation: string;
+  central: boolean;
+};
+
+export const MAGASINS: Magasin[] = [
+  { id: 'MAG-000', nom: 'Magasin central', type: 'MAGASIN', responsable: 'Hodonou Fiacre', localisation: 'Cotonou, Siège', central: true },
+  { id: 'PHA-001', nom: 'Pharmacie principale', type: 'PHARMACIE', responsable: 'Adjovi Carine', localisation: 'Cotonou, Rez-de-chaussée', central: false },
+  { id: 'MAG-001', nom: 'Magasin annexe Calavi', type: 'MAGASIN', responsable: 'Sossou Régis', localisation: 'Abomey-Calavi', central: false },
+];
+
 // ─── Utilisateurs ────────────────────────────────────────────
 export type Utilisateur = {
   id: string;

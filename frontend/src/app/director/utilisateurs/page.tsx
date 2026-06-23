@@ -9,8 +9,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SearchableSelectField } from '@/components/searchable-select';
 import { UTILISATEURS, ROLES_LIST } from '@/lib/mock-data';
+
+const roleOptions = ROLES_LIST.map((r) => ({ value: r, label: r }));
 
 export default function DirectorUtilisateursPage() {
   const [search, setSearch] = useState('');
@@ -42,14 +44,7 @@ export default function DirectorUtilisateursPage() {
               <div className="space-y-1.5"><Label>Téléphone</Label><Input /></div>
               <div className="space-y-1.5">
                 <Label>Rôle</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un rôle" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {ROLES_LIST.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <SearchableSelectField options={roleOptions} placeholder="Sélectionner un rôle" />
               </div>
               <div className="space-y-1.5"><Label>Mot de passe</Label><Input type="password" /></div>
             </div>
@@ -89,14 +84,7 @@ export default function DirectorUtilisateursPage() {
                       <div className="space-y-1.5"><Label>Email</Label><Input defaultValue={u.email} /></div>
                       <div className="space-y-1.5">
                         <Label>Rôle</Label>
-                        <Select defaultValue={u.role}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ROLES_LIST.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
+                        <SearchableSelectField options={roleOptions} defaultValue={u.role} />
                       </div>
                     </div>
                     <DialogFooter>

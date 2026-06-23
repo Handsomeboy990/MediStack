@@ -9,12 +9,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SearchableSelectField } from '@/components/searchable-select';
 import { UTILISATEURS, ROLES_LIST } from '@/lib/mock-data';
 
 // Les RH ne peuvent pas attribuer le profil Administrateur : seul un
 // administrateur dispose de ce privilège (via son propre espace).
 const ROLES_ATTRIBUABLES = ROLES_LIST.filter((r) => r !== 'Administrateur');
+const roleOptions = ROLES_ATTRIBUABLES.map((r) => ({ value: r, label: r }));
 
 export default function UtilisateursHRPage() {
   const [search, setSearch] = useState('');
@@ -46,14 +47,7 @@ export default function UtilisateursHRPage() {
               <div className="space-y-1.5"><Label>Téléphone</Label><Input placeholder="97 XX XX XX" /></div>
               <div className="space-y-1.5">
                 <Label>Rôle</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un rôle" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {ROLES_ATTRIBUABLES.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <SearchableSelectField options={roleOptions} placeholder="Sélectionner un rôle" />
               </div>
               <div className="space-y-1.5"><Label>Mot de passe provisoire</Label><Input type="password" /></div>
             </div>
@@ -98,14 +92,7 @@ export default function UtilisateursHRPage() {
                       <div className="space-y-1.5"><Label>Téléphone</Label><Input defaultValue={u.telephone} /></div>
                       <div className="space-y-1.5">
                         <Label>Rôle</Label>
-                        <Select defaultValue={u.role}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ROLES_ATTRIBUABLES.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
+                        <SearchableSelectField options={roleOptions} defaultValue={u.role} />
                       </div>
                     </div>
                     <DialogFooter>

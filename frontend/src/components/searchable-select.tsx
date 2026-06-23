@@ -7,6 +7,23 @@ import { cn } from '@/lib/utils';
 
 export type SelectOption = { value: string; label: string; hint?: string };
 
+// Variante auto-gérée : pratique pour les selects de formulaire (création ou
+// édition) qui n'ont pas besoin de remonter leur valeur au parent.
+export function SearchableSelectField({
+  options,
+  defaultValue = '',
+  placeholder,
+  className,
+}: {
+  options: SelectOption[];
+  defaultValue?: string;
+  placeholder?: string;
+  className?: string;
+}) {
+  const [value, setValue] = useState(defaultValue);
+  return <SearchableSelect options={options} value={value} onChange={setValue} placeholder={placeholder} className={className} />;
+}
+
 type Props = {
   options: SelectOption[];
   value: string;

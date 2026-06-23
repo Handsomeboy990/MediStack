@@ -6,9 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SearchableSelect } from '@/components/searchable-select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { STOCK_ARTICLES, MOUVEMENTS_STOCK } from '@/lib/mock-data';
+
+const articleOptions = STOCK_ARTICLES.map((a) => ({ value: a.id, label: a.libelle, hint: `stock ${a.quantite}` }));
 
 const entrees = MOUVEMENTS_STOCK.filter((m) => m.type === 'ENTREE');
 
@@ -35,16 +37,7 @@ export default function EntreeStockPage() {
               <>
                 <div className="space-y-1.5">
                   <Label>Article</Label>
-                  <Select value={article} onValueChange={setArticle}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner un article" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {STOCK_ARTICLES.map((a) => (
-                        <SelectItem key={a.id} value={a.id}>{a.libelle} (stock actuel : {a.quantite})</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <SearchableSelect options={articleOptions} value={article} onChange={setArticle} placeholder="Sélectionner un article" />
                 </div>
                 <div className="space-y-1.5">
                   <Label>Quantité reçue</Label>

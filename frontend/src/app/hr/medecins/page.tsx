@@ -9,8 +9,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SearchableSelectField } from '@/components/searchable-select';
 import { MEDECINS, SPECIALITES } from '@/lib/mock-data';
+
+const specialiteOptions = SPECIALITES.map((s) => ({ value: s, label: s }));
+const statutOptions = [
+  { value: 'actif', label: 'Actif' },
+  { value: 'inactif', label: 'Inactif' },
+];
 
 export default function MedecinsPage() {
   const [search, setSearch] = useState('');
@@ -40,14 +46,7 @@ export default function MedecinsPage() {
               </div>
               <div className="space-y-1.5">
                 <Label>Spécialité</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner une spécialité" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {SPECIALITES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <SearchableSelectField options={specialiteOptions} placeholder="Sélectionner une spécialité" />
               </div>
               <div className="space-y-1.5"><Label>Téléphone</Label><Input placeholder="97 XX XX XX" /></div>
               <div className="space-y-1.5"><Label>Email</Label><Input type="email" placeholder="medecin@clinicflow.bj" /></div>
@@ -86,28 +85,13 @@ export default function MedecinsPage() {
                       </div>
                       <div className="space-y-1.5">
                         <Label>Spécialité</Label>
-                        <Select defaultValue={m.specialite}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {SPECIALITES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
+                        <SearchableSelectField options={specialiteOptions} defaultValue={m.specialite} />
                       </div>
                       <div className="space-y-1.5"><Label>Téléphone</Label><Input defaultValue={m.telephone} /></div>
                       <div className="space-y-1.5"><Label>Email</Label><Input defaultValue={m.email} /></div>
                       <div className="space-y-1.5">
                         <Label>Statut</Label>
-                        <Select defaultValue={m.actif ? 'actif' : 'inactif'}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="actif">Actif</SelectItem>
-                            <SelectItem value="inactif">Inactif</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <SearchableSelectField options={statutOptions} defaultValue={m.actif ? 'actif' : 'inactif'} />
                       </div>
                     </div>
                     <DialogFooter>
