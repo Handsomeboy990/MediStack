@@ -1,4 +1,16 @@
 // ─── Patients ───────────────────────────────────────────────
+// Une carte d'assurance rattachée à un patient. Un patient peut en posséder
+// plusieurs ; le choix d'une carte unique se fait au moment de la facturation.
+export type CarteAssurance = {
+  id: string;
+  nom: string;
+  societe: string;
+  numeroPolice: string;
+  numeroMatricule: string;
+  dateExpiration: string;
+  taux: number;
+};
+
 export type Patient = {
   id: string;
   nom: string;
@@ -6,20 +18,18 @@ export type Patient = {
   dateNaissance: string;
   telephone: string;
   adresse: string;
-  assurance: string | null;
-  numeroAssurance: string | null;
-  tauxCouverture: number;
   urgenceNom: string;
   urgenceTel: string;
+  cartesAssurance: CarteAssurance[];
 };
 
 export const PATIENTS: Patient[] = [
-  { id: 'PAT-001', nom: 'Kone', prenom: 'Amina', dateNaissance: '1985-03-12', telephone: '97 00 11 22', adresse: 'Cotonou, Zongo', assurance: 'CNSS', numeroAssurance: 'CNSS-4521', tauxCouverture: 40, urgenceNom: 'Kone Ibrahim', urgenceTel: '96 22 33 44' },
-  { id: 'PAT-002', nom: 'Adodo', prenom: 'Kofi', dateNaissance: '1990-07-18', telephone: '95 33 44 55', adresse: 'Abomey-Calavi, Lot 12', assurance: null, numeroAssurance: null, tauxCouverture: 0, urgenceNom: 'Adodo Marie', urgenceTel: '97 55 66 77' },
-  { id: 'PAT-003', nom: 'Lawson', prenom: 'Adjoa', dateNaissance: '1972-11-05', telephone: '96 44 55 66', adresse: 'Porto-Novo, Tokpota', assurance: 'INAM', numeroAssurance: 'INAM-8812', tauxCouverture: 50, urgenceNom: 'Lawson Kofi', urgenceTel: '95 77 88 99' },
-  { id: 'PAT-004', nom: 'Hodonou', prenom: 'Fiacre', dateNaissance: '2001-01-22', telephone: '97 55 66 77', adresse: 'Cotonou, Akpakpa', assurance: 'SONIAM', numeroAssurance: 'SON-2234', tauxCouverture: 35, urgenceNom: 'Hodonou Agnès', urgenceTel: '96 88 99 00' },
-  { id: 'PAT-005', nom: 'Dossou', prenom: 'Emeline', dateNaissance: '1965-09-30', telephone: '95 66 77 88', adresse: 'Parakou, Centre', assurance: 'CNSS', numeroAssurance: 'CNSS-7890', tauxCouverture: 40, urgenceNom: 'Dossou Roland', urgenceTel: '97 00 11 22' },
-  { id: 'PAT-006', nom: 'Gbessi', prenom: 'Théodore', dateNaissance: '1998-05-14', telephone: '97 77 88 99', adresse: 'Cotonou, Fidjrossè', assurance: null, numeroAssurance: null, tauxCouverture: 0, urgenceNom: 'Gbessi Pierre', urgenceTel: '95 00 11 22' },
+  { id: 'PAT-001', nom: 'Kone', prenom: 'Amina', dateNaissance: '1985-03-12', telephone: '01 97 00 11 22', adresse: 'Cotonou, Zongo', urgenceNom: 'Kone Ibrahim', urgenceTel: '01 96 22 33 44', cartesAssurance: [{ id: 'CA-001', nom: 'CNSS', societe: 'Caisse Nationale de Sécurité Sociale', numeroPolice: 'POL-4521', numeroMatricule: 'CNSS-4521', dateExpiration: '2027-03-31', taux: 40 }] },
+  { id: 'PAT-002', nom: 'Adodo', prenom: 'Kofi', dateNaissance: '1990-07-18', telephone: '01 95 33 44 55', adresse: 'Abomey-Calavi, Lot 12', urgenceNom: 'Adodo Marie', urgenceTel: '01 97 55 66 77', cartesAssurance: [] },
+  { id: 'PAT-003', nom: 'Lawson', prenom: 'Adjoa', dateNaissance: '1972-11-05', telephone: '01 96 44 55 66', adresse: 'Porto-Novo, Tokpota', urgenceNom: 'Lawson Kofi', urgenceTel: '01 95 77 88 99', cartesAssurance: [{ id: 'CA-002', nom: 'INAM', societe: 'Institut National d\'Assurance Maladie', numeroPolice: 'POL-8812', numeroMatricule: 'INAM-8812', dateExpiration: '2026-12-31', taux: 50 }] },
+  { id: 'PAT-004', nom: 'Hodonou', prenom: 'Fiacre', dateNaissance: '2001-01-22', telephone: '01 97 55 66 77', adresse: 'Cotonou, Akpakpa', urgenceNom: 'Hodonou Agnès', urgenceTel: '01 96 88 99 00', cartesAssurance: [{ id: 'CA-003', nom: 'SONIAM', societe: 'Société Nationale d\'Assurance Maladie', numeroPolice: 'POL-2234', numeroMatricule: 'SON-2234', dateExpiration: '2027-06-30', taux: 35 }] },
+  { id: 'PAT-005', nom: 'Dossou', prenom: 'Emeline', dateNaissance: '1965-09-30', telephone: '01 95 66 77 88', adresse: 'Parakou, Centre', urgenceNom: 'Dossou Roland', urgenceTel: '01 97 00 11 22', cartesAssurance: [{ id: 'CA-004', nom: 'CNSS', societe: 'Caisse Nationale de Sécurité Sociale', numeroPolice: 'POL-7890', numeroMatricule: 'CNSS-7890', dateExpiration: '2027-01-31', taux: 40 }, { id: 'CA-005', nom: 'GIZ', societe: 'GIZ Assurance Santé', numeroPolice: 'POL-3310', numeroMatricule: 'GIZ-3310', dateExpiration: '2026-09-30', taux: 60 }] },
+  { id: 'PAT-006', nom: 'Gbessi', prenom: 'Théodore', dateNaissance: '1998-05-14', telephone: '01 97 77 88 99', adresse: 'Cotonou, Fidjrossè', urgenceNom: 'Gbessi Pierre', urgenceTel: '01 95 00 11 22', cartesAssurance: [] },
 ];
 
 // ─── Factures ───────────────────────────────────────────────

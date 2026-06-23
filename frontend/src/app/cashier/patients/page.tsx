@@ -2,18 +2,17 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Plus, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';import { PATIENTS, ASSURANCES } from '@/lib/mock-data';
+import { NewPatientDialog } from '@/components/new-patient-dialog';
+import { usePatients } from '@/lib/patients-store';
 
 export default function PatientsPage() {
+  const patients = usePatients();
   const [search, setSearch] = useState('');
-  const filtered = PATIENTS.filter(
+  const filtered = patients.filter(
     (p) =>
       p.nom.toLowerCase().includes(search.toLowerCase()) ||
       p.prenom.toLowerCase().includes(search.toLowerCase()) ||
@@ -26,76 +25,42 @@ export default function PatientsPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Rechercher par nom, prénom ou téléphone…"
+            placeholder="Rechercher par nom, prénom ou téléphone..."
             className="pl-9"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="brand" className="gap-2 ">
-              <Plus className="h-4 w-4" /> Nouveau patient
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Créer un patient</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-3">
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="space-y-1.5"><Label>Nom</Label><Input placeholder="Kone" /></div>
-                <div className="space-y-1.5"><Label>Prénom</Label><Input placeholder="Amina" /></div>
-              </div>
-              <div className="space-y-1.5"><Label>Date de naissance</Label><Input type="date" /></div>
-              <div className="space-y-1.5"><Label>Téléphone</Label><Input placeholder="97 00 11 22" /></div>
-              <div className="space-y-1.5"><Label>Adresse</Label><Input placeholder="Cotonou, Zongo" /></div>
-              <div className="space-y-1.5">
-                <Label>Assurance</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner une assurance" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">Aucune</SelectItem>
-                    {ASSURANCES.filter((a) => a.actif).map((a) => (
-                      <SelectItem key={a.id} value={a.code}>{a.code} · {a.nom}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1.5"><Label>Numéro de police</Label><Input placeholder="CNSS-XXXX" /></div>
-              <div className="space-y-1.5"><Label>Contact urgence</Label><Input placeholder="Nom et téléphone" /></div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline">Annuler</Button>
-              <Button variant="brand" className="">Enregistrer</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <NewPatientDialog />
       </div>
 
       <div className="space-y-2">
         {filtered.length === 0 && (
           <p className="py-10 text-center text-sm text-muted-foreground">Aucun patient trouvé.</p>
         )}
-        {filtered.map((p) => (
-          <Link key={p.id} href={`/cashier/patients/${p.id}`}>
-            <div className="flex items-center justify-between rounded-xl border border-border bg-white p-4 transition hover:border-primary hover:shadow-sm">
-              <div>
-                <p className="font-semibold">{p.prenom} {p.nom}</p>
-                <p className="text-xs text-muted-foreground">{p.id} · {p.telephone} · {p.adresse}</p>
+        {filtered.map((p) => {
+          const carte = p.cartesAssurance[0];
+          return (
+            <Link key={p.id} href={`/cashier/patients/${p.id}`}>
+              <div className="flex items-center justify-between rounded-xl border border-border bg-white p-4 transition hover:border-primary hover:shadow-sm">
+                <div>
+                  <p className="font-semibold">{p.prenom} {p.nom}</p>
+                  <p className="text-xs text-muted-foreground">{p.id} · {p.telephone} · {p.adresse}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {carte ? (
+                    <Badge variant="success">
+                      {carte.nom} · {carte.taux}%
+                      {p.cartesAssurance.length > 1 ? ` (+${p.cartesAssurance.length - 1})` : ''}
+                    </Badge>
+                  ) : (
+                    <Badge variant="secondary">Sans assurance</Badge>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                {p.assurance ? (
-                  <Badge variant="success">{p.assurance} · {p.tauxCouverture}%</Badge>
-                ) : (
-                  <Badge variant="secondary">Sans assurance</Badge>
-                )}
-              </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          );
+        })}
       </div>
       <p className="text-xs text-muted-foreground">{filtered.length} patient(s) affiché(s)</p>
     </main>

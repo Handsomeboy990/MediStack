@@ -11,12 +11,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { PATIENTS, PRESTATIONS, fmt } from '@/lib/mock-data';
+import { PRESTATIONS, fmt } from '@/lib/mock-data';
+import { usePatients } from '@/lib/patients-store';
 
 type Ligne = { libelle: string; qte: number; pu: number };
 
 export default function NouvelleFacturePage() {
-  const [patientId, setPatientId] = useState('PAT-001');
+  const patients = usePatients();
+  const [patientId, setPatientId] = useState(patients[0]?.id ?? '');
+  const [carteId, setCarteId] = useState('aucune');
   const [lignes, setLignes] = useState<Ligne[]>([
     { libelle: 'Consultation générale', qte: 1, pu: 5000 },
   ]);
@@ -25,9 +28,11 @@ export default function NouvelleFacturePage() {
   const [newPu, setNewPu] = useState(0);
   const [selectedPrestationValue, setSelectedPrestationValue] = useState('');
 
-  const patient = PATIENTS.find((p) => p.id === patientId) ?? PATIENTS[0];
+  const patient = patients.find((p) => p.id === patientId) ?? patients[0];
+  const carte = patient?.cartesAssurance.find((c) => c.id === carteId);
+  const taux = carte?.taux ?? 0;
   const total = lignes.reduce((s, l) => s + l.qte * l.pu, 0);
-  const assurance = Math.round((total * patient.tauxCouverture) / 100);
+  const assurance = Math.round((total * taux) / 100);
   const net = total - assurance;
 
   const addLigne = () => {
@@ -56,22 +61,36 @@ export default function NouvelleFacturePage() {
             <CardContent className="space-y-3">
               <div className="space-y-1.5">
                 <Label>Sélectionner un patient</Label>
-                <Select value={patientId} onValueChange={setPatientId}>
+                <Select value={patientId} onValueChange={(v) => { setPatientId(v); setCarteId('aucune'); }}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {PATIENTS.map((p) => (
+                    {patients.map((p) => (
                       <SelectItem key={p.id} value={p.id}>{p.prenom} {p.nom} · {p.telephone}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-              {patient.assurance && (
+              <div className="space-y-1.5">
+                <Label>Carte d&apos;assurance</Label>
+                <Select value={carteId} onValueChange={setCarteId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Aucune assurance" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="aucune">Aucune assurance</SelectItem>
+                    {patient?.cartesAssurance.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>{c.nom} · {c.taux}% · {c.numeroMatricule}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {carte && (
                 <div className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
                   <span>Assuré :</span>
-                  <Badge variant="success">{patient.assurance}</Badge>
-                  <span>· {patient.tauxCouverture}% pris en charge</span>
+                  <Badge variant="success">{carte.nom}</Badge>
+                  <span>· {carte.taux}% pris en charge</span>
                 </div>
               )}
               <div className="grid gap-3 sm:grid-cols-2">
@@ -152,7 +171,7 @@ export default function NouvelleFacturePage() {
           <CardContent className="space-y-4">
             <div className="space-y-2 text-sm">
               <div className="flex justify-between"><span className="text-muted-foreground">Total brut</span><strong>{fmt(total)}</strong></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Assurance ({patient.tauxCouverture}%)</span><strong className="text-emerald-600">−{fmt(assurance)}</strong></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Assurance ({taux}%)</span><strong className="text-emerald-600">-{fmt(assurance)}</strong></div>
               <Separator />
               <div className="flex justify-between text-base"><span className="font-semibold">Net à payer</span><strong className="text-primary">{fmt(net)}</strong></div>
             </div>

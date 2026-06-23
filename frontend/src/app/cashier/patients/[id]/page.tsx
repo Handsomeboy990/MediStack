@@ -1,15 +1,23 @@
+'use client';
+
 import Link from 'next/link';
-import { ArrowLeft, FileText, Phone } from 'lucide-react';
+import { ArrowLeft, FileText, Phone, ShieldCheck } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { PATIENTS, FACTURES, STATUT_LABELS, STATUT_VARIANTS, fmt } from '@/lib/mock-data';
+import { AddCarteDialog } from '@/components/add-carte-dialog';
+import { FACTURES, STATUT_LABELS, STATUT_VARIANTS, fmt } from '@/lib/mock-data';
+import { usePatient } from '@/lib/patients-store';
 
 export default function FichePatientPage({ params }: { params: { id: string } }) {
-  const patient = PATIENTS.find((p) => p.id === params.id) ?? PATIENTS[0];
-  const factures = FACTURES.filter((f) => f.patientId === patient.id);
+  const patient = usePatient(params.id);
+  const factures = FACTURES.filter((f) => f.patientId === params.id);
+
+  if (!patient) {
+    return <p className="py-10 text-center text-sm text-muted-foreground">Patient introuvable.</p>;
+  }
 
   return (
     <main className="space-y-6">
@@ -27,7 +35,7 @@ export default function FichePatientPage({ params }: { params: { id: string } })
         <Card>
           <CardHeader><CardTitle>Informations personnelles</CardTitle></CardHeader>
           <CardContent className="space-y-3 text-sm">
-            <div className="flex justify-between"><span className="text-muted-foreground">Né(e) le</span><strong>{patient.dateNaissance}</strong></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Né(e) le</span><strong>{patient.dateNaissance || 'Non renseignée'}</strong></div>
             <div className="flex justify-between"><span className="text-muted-foreground">Téléphone</span><strong>{patient.telephone}</strong></div>
             <div className="flex justify-between"><span className="text-muted-foreground">Adresse</span><strong>{patient.adresse}</strong></div>
             <Separator />
@@ -42,20 +50,31 @@ export default function FichePatientPage({ params }: { params: { id: string } })
         </Card>
 
         <Card>
-          <CardHeader><CardTitle>Couverture assurance</CardTitle></CardHeader>
+          <CardHeader className="flex-row items-center justify-between space-y-0">
+            <CardTitle>Cartes d&apos;assurance</CardTitle>
+            <AddCarteDialog patientId={patient.id} />
+          </CardHeader>
           <CardContent className="space-y-3 text-sm">
-            {patient.assurance ? (
-              <>
-                <div className="flex justify-between"><span className="text-muted-foreground">Organisme</span><Badge variant="success">{patient.assurance}</Badge></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">N° police</span><strong>{patient.numeroAssurance}</strong></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Taux prise en charge</span><strong className="text-primary">{patient.tauxCouverture} %</strong></div>
-              </>
+            {patient.cartesAssurance.length === 0 ? (
+              <p className="text-muted-foreground">Aucune carte enregistrée pour ce patient.</p>
             ) : (
-              <p className="text-muted-foreground">Ce patient n&apos;a pas de couverture assurance enregistrée.</p>
+              patient.cartesAssurance.map((c) => (
+                <div key={c.id} className="rounded-xl border border-border p-3">
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-2 font-medium"><ShieldCheck className="h-4 w-4 text-primary" />{c.nom}</span>
+                    <Badge variant="success">{c.taux}%</Badge>
+                  </div>
+                  <div className="mt-2 grid gap-1 text-xs text-muted-foreground">
+                    {c.societe && <span>{c.societe}</span>}
+                    <span>Police : {c.numeroPolice || '-'} · Matricule : {c.numeroMatricule || '-'}</span>
+                    {c.dateExpiration && <span>Expire le {c.dateExpiration}</span>}
+                  </div>
+                </div>
+              ))
             )}
             <Separator />
             <Link href={`/cashier/factures/nouveau?patient=${patient.id}`}>
-              <Button variant="brand" className="w-full  gap-2">
+              <Button variant="brand" className="w-full gap-2">
                 <FileText className="h-4 w-4" /> Nouvelle facture pour ce patient
               </Button>
             </Link>
