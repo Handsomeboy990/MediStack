@@ -6,6 +6,7 @@ import { Eye, EyeOff } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import Link from 'next/link';
 
 export default function LoginPage() {
   const [showPwd, setShowPwd] = useState(false);
@@ -22,18 +23,18 @@ export default function LoginPage() {
         </div>
 
         {/* Logo */}
-        <div className="relative flex items-center gap-3">
-          <div className="flex h-12 w-44 items-center justify-center overflow-hidden rounded-2xl bg-white/20 px-3">
-            <Image
-              src="/logo.png"
-              alt="MediTrace"
-              width={220}
-              height={72}
-              className="h-8 w-auto object-contain"
-              priority
-            />
-          </div>
-        </div>
+       <Link href="/" className="relative flex items-center gap-3">
+  <div className="flex items-center justify-center overflow-hidden rounded-2xl bg-white/70 p-3">
+    <Image
+      src="/logo.png"
+      alt="MediTrace"
+      width={220}
+      height={72}
+      className="h-[100px] w-auto object-contain"
+      priority
+    />
+  </div>
+</Link>
 
         {/* Accroche centrale */}
         <div className="relative space-y-6">

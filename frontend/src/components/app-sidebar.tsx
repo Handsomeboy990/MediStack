@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Bell, LogOut } from 'lucide-react';
+import { Bell, LogOut, UserCircle2 } from 'lucide-react';
 
 import {
   Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent,
@@ -19,7 +19,7 @@ function AppSidebar() {
   const config = currentRole ? roleNavConfig[currentRole] : null;
 
   return (
-    <Sidebar collapsible="icon" className="bg-primary text-primary-foreground">
+    <Sidebar collapsible="icon" className="h-screen md:sticky md:top-0 bg-primary text-primary-foreground">
       <SidebarHeader className="border-b border-white/10 pb-4">
         <div className="flex items-center gap-3 px-1 pt-1">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white/15">
@@ -99,14 +99,6 @@ function AppSidebar() {
             <p className="truncate text-sm font-medium text-primary-foreground">Utilisateur</p>
             <p className="truncate text-xs text-primary-foreground/60">Connecté</p>
           </div>
-          <div className="group-data-[state=collapsed]/sidebar:hidden flex gap-1">
-            <Link href="/notifications" className="rounded-md p-1.5 text-primary-foreground/60 hover:bg-white/10 hover:text-primary-foreground">
-              <Bell className="h-3.5 w-3.5" />
-            </Link>
-            <Link href="/login" className="rounded-md p-1.5 text-primary-foreground/60 hover:bg-white/10 hover:text-primary-foreground">
-              <LogOut className="h-3.5 w-3.5" />
-            </Link>
-          </div>
         </div>
       </SidebarFooter>
       <SidebarRail />
@@ -116,7 +108,10 @@ function AppSidebar() {
 
 function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const showSidebar = roleOrder.some((r) => pathname.startsWith(r));
+  const appRoutesWithSidebar = ['/profil', '/notifications'];
+  const showSidebar =
+    roleOrder.some((r) => pathname.startsWith(r)) ||
+    appRoutesWithSidebar.some((route) => pathname.startsWith(route));
 
   if (!showSidebar) return <>{children}</>;
 
@@ -125,16 +120,45 @@ function AppShell({ children }: { children: React.ReactNode }) {
   const currentItem = config?.items.find((item) =>
     item.href === currentRole ? pathname === item.href : pathname.startsWith(item.href),
   );
-  const pageTitle = currentItem?.label ?? config?.label ?? 'MediTrace';
+  const staticTitles: Record<string, string> = {
+    '/profil': 'Profil',
+    '/notifications': 'Notifications',
+  };
+  const staticTitle = Object.entries(staticTitles).find(([route]) => pathname.startsWith(route))?.[1];
+  const pageTitle = currentItem?.label ?? staticTitle ?? config?.label ?? 'MediTrace';
 
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
         <AppSidebar />
         <SidebarInset>
-          <SidebarInsetHeader className="border-b bg-white">
+          <SidebarInsetHeader className="sticky top-0 z-40 border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
             <SidebarTrigger />
             <h2 className="text-sm font-semibold text-foreground">{pageTitle}</h2>
+            <div className="ml-auto flex items-center gap-2">
+              <Link
+                href="/notifications"
+                aria-label="Notifications"
+                className="relative inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
+              >
+                <Bell className="h-4 w-4" />
+                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500" />
+              </Link>
+              <Link
+                href="/profil"
+                aria-label="Profil"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
+              >
+                <UserCircle2 className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/login"
+                aria-label="Déconnexion"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
+              >
+                <LogOut className="h-4 w-4" />
+              </Link>
+            </div>
           </SidebarInsetHeader>
           <div className="bg-background p-4 sm:p-6 lg:p-8">{children}</div>
         </SidebarInset>
