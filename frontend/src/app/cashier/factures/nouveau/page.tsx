@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { SearchableSelect } from '@/components/searchable-select';
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { MEDECINS, PRESTATIONS, fmt } from '@/lib/mock-data';
+import { printFacture, printTicket, type PrintableFacture } from '@/lib/print';
 import { usePatients } from '@/lib/patients-store';
 
 type Ligne = { libelle: string; qte: number; pu: number };
@@ -51,6 +52,20 @@ export default function NouvelleFacturePage() {
     setLignes([...lignes, { libelle: p.libelle, qte: newQte, pu: p.tarif }]);
     setPrestation('');
     setNewQte(1);
+  };
+
+  const draft: PrintableFacture = {
+    id: 'BROUILLON',
+    patient: patient ? `${patient.prenom} ${patient.nom}` : '-',
+    date: '2026-06-23',
+    agent: 'Ahouansou B.',
+    lignes,
+    montantBrut: brut,
+    assurancePrise: assurance,
+    net,
+    verse: Number(montantRecu || 0),
+    statut: 'EN_ATTENTE',
+    modePaiement: mode,
   };
 
   return (
@@ -180,12 +195,12 @@ export default function NouvelleFacturePage() {
               </div>
               <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Rendu monnaie</span><strong>{fmt(rendu)}</strong></div>
               <Button variant="brand" className="w-full gap-2"><Lock className="h-4 w-4" />Valider et verrouiller</Button>
-              <Button variant="outline" className="w-full gap-2"><Printer className="h-4 w-4" />Aperçu ticket</Button>
+              <Button variant="outline" className="w-full gap-2" onClick={() => printTicket(draft, rendu)}><Printer className="h-4 w-4" />Aperçu ticket</Button>
             </CardContent>
           </Card>
           <div className="flex flex-col gap-2">
             <Button variant="outline" className="w-full gap-2 border-destructive/40 text-destructive hover:bg-destructive/5"><XCircle className="h-4 w-4" />Demande d&apos;annulation</Button>
-            <Button variant="outline" className="w-full gap-2"><Printer className="h-4 w-4" />Impression facture</Button>
+            <Button variant="outline" className="w-full gap-2" onClick={() => printFacture(draft)}><Printer className="h-4 w-4" />Impression facture</Button>
           </div>
         </div>
       </div>
