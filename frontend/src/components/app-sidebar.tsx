@@ -19,7 +19,7 @@ function AppSidebar() {
   const config = currentRole ? roleNavConfig[currentRole] : null;
 
   return (
-    <Sidebar collapsible="icon" className="h-screen md:sticky md:top-0 bg-primary text-primary-foreground">
+    <Sidebar collapsible="icon" className="h-screen md:sticky md:top-0 bg-[hsl(var(--sidebar-background))] text-primary-foreground">
       <SidebarHeader className="border-b border-white/10 pb-4">
         <div className="flex items-center gap-3 px-1 pt-1">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white/15">

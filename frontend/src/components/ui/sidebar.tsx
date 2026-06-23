@@ -111,7 +111,7 @@ function Sidebar({
       <aside
         data-slot="sidebar"
         data-mobile="true"
-        className={cn('fixed inset-y-0 z-50 flex w-[var(--sidebar-width-mobile)] flex-col border-r bg-primary text-primary-foreground shadow-xl', side === 'right' && 'right-0 border-r-0 border-l', className)}
+        className={cn('fixed inset-y-0 z-50 flex w-[var(--sidebar-width-mobile)] flex-col border-r bg-[hsl(var(--sidebar-background))] text-primary-foreground shadow-xl', side === 'right' && 'right-0 border-r-0 border-l', className)}
         {...props}
       >
         {children}
@@ -128,7 +128,7 @@ function Sidebar({
       data-side={side}
       data-variant={variant}
       className={cn(
-        'group/sidebar relative hidden min-h-svh flex-col border-r bg-primary text-primary-foreground transition-[width] duration-200 ease-linear md:flex',
+        'group/sidebar relative hidden min-h-svh flex-col border-r bg-[hsl(var(--sidebar-background))] text-primary-foreground transition-[width] duration-200 ease-linear md:flex',
         side === 'right' && 'border-r-0 border-l',
         collapsed ? 'w-[var(--sidebar-width-icon)]' : 'w-[var(--sidebar-width)]',
         className,
