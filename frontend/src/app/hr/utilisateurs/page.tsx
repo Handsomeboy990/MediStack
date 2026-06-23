@@ -12,6 +12,10 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UTILISATEURS, ROLES_LIST } from '@/lib/mock-data';
 
+// Les RH ne peuvent pas attribuer le profil Administrateur : seul un
+// administrateur dispose de ce privilège (via son propre espace).
+const ROLES_ATTRIBUABLES = ROLES_LIST.filter((r) => r !== 'Administrateur');
+
 export default function UtilisateursHRPage() {
   const [search, setSearch] = useState('');
   const filtered = UTILISATEURS.filter(
@@ -47,7 +51,7 @@ export default function UtilisateursHRPage() {
                     <SelectValue placeholder="Sélectionner un rôle" />
                   </SelectTrigger>
                   <SelectContent>
-                    {ROLES_LIST.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                    {ROLES_ATTRIBUABLES.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -99,7 +103,7 @@ export default function UtilisateursHRPage() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {ROLES_LIST.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                            {ROLES_ATTRIBUABLES.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
                           </SelectContent>
                         </Select>
                       </div>

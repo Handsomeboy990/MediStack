@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Printer, Search } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +15,7 @@ import { printFacture } from '@/lib/print';
 const STATUTS = ['Tous', 'PAYE', 'PARTIEL', 'EN_ATTENTE', 'ANNULE'];
 
 export default function FacturesManagerPage() {
+  const router = useRouter();
   const [search, setSearch] = useState('');
   const [statut, setStatut] = useState('Tous');
   const [date, setDate] = useState('');
@@ -70,7 +72,7 @@ export default function FacturesManagerPage() {
           </TableHeader>
           <TableBody>
             {filtered.map((f) => (
-              <TableRow key={f.id}>
+              <TableRow key={f.id} className="cursor-pointer" onClick={() => router.push(`/cashier-manager/factures/${f.id}`)}>
                 <TableCell className="font-bold text-primary">{f.id}</TableCell>
                 <TableCell className="font-medium">{f.patient}</TableCell>
                 <TableCell className="text-muted-foreground">{f.date}</TableCell>
@@ -79,7 +81,7 @@ export default function FacturesManagerPage() {
                 <TableCell className="text-right">{fmt(f.verse)}</TableCell>
                 <TableCell><Badge variant={STATUT_VARIANTS[f.statut]}>{STATUT_LABELS[f.statut]}</Badge></TableCell>
                 <TableCell className="text-right">
-                  <button onClick={() => printFacture(f)} className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline">
+                  <button onClick={(e) => { e.stopPropagation(); printFacture(f); }} className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline">
                     <Printer className="h-3.5 w-3.5" />Imprimer
                   </button>
                 </TableCell>

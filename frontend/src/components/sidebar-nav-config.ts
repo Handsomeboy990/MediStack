@@ -59,6 +59,11 @@ export const roleNavConfig: Record<string, RoleConfig> = {
       { href: '/director/stats', label: 'Statistiques', icon: BarChart3 },
       { href: '/director/utilisateurs', label: 'Utilisateurs', icon: Users },
       { href: '/director/roles', label: 'Rôles', icon: Shield },
+      // L'administrateur accède à tous les espaces de l'application.
+      { href: '/cashier-manager', label: 'Espace caisse (resp.)', icon: TrendingUp },
+      { href: '/cashier', label: 'Espace caisse (agent)', icon: Receipt },
+      { href: '/storekeeper', label: 'Espace magasin', icon: Warehouse },
+      { href: '/hr', label: 'Espace RH', icon: Stethoscope },
     ],
   },
 };

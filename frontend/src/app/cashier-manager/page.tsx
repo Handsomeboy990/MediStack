@@ -1,29 +1,23 @@
 import Link from 'next/link';
-import { AlertTriangle, Receipt, Shield, Stethoscope, TrendingUp } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { KpiCard } from '@/components/kpi-card';
-import { FACTURES, ANNULATIONS, fmt } from '@/lib/mock-data';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { ANNULATIONS, FACTURES, STATUT_LABELS, STATUT_VARIANTS, fmt } from '@/lib/mock-data';
 
 const today = '2026-06-23';
 const facs = FACTURES.filter((f) => f.date === today);
-const totalJour = facs.filter((f) => f.statut === 'PAYE').reduce((s, f) => s + f.net, 0);
-const enAttenteAnnul = ANNULATIONS.filter((a) => a.statut === 'EN_ATTENTE').length;
+const totalJour = facs.filter((f) => f.statut === 'PAYE').reduce((s, f) => s + f.verse, 0);
+const enAttenteAnnul = ANNULATIONS.filter((a) => a.statut === 'EN_ATTENTE');
+const agentsActifs = [...new Set(facs.map((f) => f.agent))].length;
 
 const kpis = [
   { label: 'Recette du jour', value: fmt(totalJour), tone: 'primary' as const, hint: 'Net encaissé' },
-  { label: 'Factures payées', value: String(facs.filter((f) => f.statut === 'PAYE').length), tone: 'success' as const, hint: 'Aujourd’hui' },
-  { label: 'Partielles', value: String(facs.filter((f) => f.statut === 'PARTIEL').length), tone: 'warning' as const, hint: 'Solde restant' },
-  { label: 'Annulations en attente', value: String(enAttenteAnnul), tone: 'danger' as const, hint: 'À traiter' },
-];
-
-const navCards = [
-  { href: '/cashier-manager/factures', label: 'Liste des factures', desc: 'Toutes les factures du centre', icon: Receipt },
-  { href: '/cashier-manager/annulations', label: 'Annulations', desc: `${enAttenteAnnul} en attente`, icon: AlertTriangle },
-  { href: '/cashier-manager/recette', label: 'Recette', desc: 'Globale et par caissier', icon: TrendingUp },
-  { href: '/cashier-manager/prestations', label: 'Prestations', desc: 'Gérer le catalogue', icon: Stethoscope },
-  { href: '/cashier-manager/assurances', label: 'Assurances', desc: 'Organismes et taux', icon: Shield },
+  { label: 'Caissiers actifs', value: String(agentsActifs), tone: 'success' as const, hint: 'Ayant facturé' },
+  { label: 'Annulations en attente', value: String(enAttenteAnnul.length), tone: 'danger' as const, hint: 'À traiter' },
+  { label: 'Factures émises', value: String(facs.length), tone: 'neutral' as const, hint: 'Aujourd’hui' },
 ];
 
 export default function CashierManagerPage() {
@@ -38,48 +32,69 @@ export default function CashierManagerPage() {
         {kpis.map((k) => <KpiCard key={k.label} label={k.label} value={k.value} tone={k.tone} hint={k.hint} />)}
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-        {navCards.map((c) => {
-          const Icon = c.icon;
-          return (
-            <Link key={c.href} href={c.href}>
-              <Card className="h-full cursor-pointer transition hover:border-primary hover:shadow-sm">
-                <CardContent className="flex items-center gap-4 p-5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                    <Icon className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-semibold">{c.label}</p>
-                    <p className="text-xs text-muted-foreground">{c.desc}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          );
-        })}
-      </div>
+      <div className="grid gap-6 xl:grid-cols-3">
+        {/* Journal des opérations */}
+        <Card className="overflow-hidden xl:col-span-2">
+          <CardHeader className="flex-row items-center justify-between space-y-0">
+            <CardTitle className="text-base">Journal des opérations</CardTitle>
+            <Link href="/cashier-manager/factures" className="text-xs font-semibold text-primary hover:underline">Voir tout</Link>
+          </CardHeader>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Référence</TableHead>
+                <TableHead>Agent</TableHead>
+                <TableHead>Patient</TableHead>
+                <TableHead className="text-right">Montant</TableHead>
+                <TableHead>Statut</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {FACTURES.slice(0, 7).map((f) => (
+                <TableRow key={f.id}>
+                  <TableCell className="font-bold text-primary">{f.id}</TableCell>
+                  <TableCell className="text-muted-foreground">{f.agent}</TableCell>
+                  <TableCell className="font-medium">{f.patient}</TableCell>
+                  <TableCell className="text-right font-semibold">{fmt(f.net)}</TableCell>
+                  <TableCell><Badge variant={STATUT_VARIANTS[f.statut]}>{STATUT_LABELS[f.statut]}</Badge></TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
 
-      <Card>
-        <CardHeader><CardTitle className="text-base">Activité récente</CardTitle></CardHeader>
-        <CardContent className="space-y-2">
-          {FACTURES.slice(0, 4).map((f) => (
-            <Link key={f.id} href="/cashier-manager/factures">
-              <div className="flex items-center justify-between rounded-xl border border-border p-3 transition hover:bg-muted/30">
-                <div>
-                  <p className="text-sm font-medium">{f.patient}</p>
-                  <p className="text-xs text-muted-foreground">{f.id} · {f.agent}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-semibold text-primary">{fmt(f.net)}</p>
-                  <Badge variant={f.statut === 'PAYE' ? 'success' : f.statut === 'PARTIEL' ? 'warning' : 'secondary'}>
-                    {f.statut === 'PAYE' ? 'Payée' : f.statut === 'PARTIEL' ? 'Partielle' : f.statut}
-                  </Badge>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </CardContent>
-      </Card>
+        {/* Actions requises */}
+        <div className="space-y-4">
+          <Card>
+            <CardHeader><CardTitle className="text-base">Actions requises</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              {enAttenteAnnul.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Aucune demande en attente.</p>
+              ) : (
+                enAttenteAnnul.map((a) => (
+                  <div key={a.id} className="rounded-xl border border-border p-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="text-sm font-semibold">Annulation demandée</p>
+                        <p className="text-xs text-muted-foreground">{a.factureId} · {a.patient}</p>
+                      </div>
+                      <p className="text-sm font-bold text-rose-600">{fmt(a.montant)}</p>
+                    </div>
+                    <p className="mt-2 rounded-lg bg-muted/50 p-2 text-xs text-muted-foreground">Motif : {a.motif}</p>
+                    <div className="mt-3 flex gap-2">
+                      <Button variant="brand" size="sm" className="flex-1">Approuver</Button>
+                      <Button variant="outline" size="sm" className="flex-1">Rejeter</Button>
+                    </div>
+                  </div>
+                ))
+              )}
+              <Link href="/cashier-manager/annulations">
+                <Button variant="outline" size="sm" className="w-full">Toutes les annulations</Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </main>
   );
 }
