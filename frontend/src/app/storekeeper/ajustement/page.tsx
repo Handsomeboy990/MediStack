@@ -20,7 +20,7 @@ export default function AjustementPage() {
             <Label>Article</Label>
             <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
               {STOCK_ARTICLES.map((a) => (
-                <option key={a.id} value={a.id}>{a.libelle} — stock actuel : {a.quantite}</option>
+                <option key={a.id} value={a.id}>{a.libelle} · stock actuel : {a.quantite}</option>
               ))}
             </select>
           </div>

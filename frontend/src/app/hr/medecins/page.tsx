@@ -72,7 +72,7 @@ export default function MedecinsPage() {
                     <Button variant="outline" size="sm" className="gap-1"><Pencil className="h-3.5 w-3.5" />Modifier</Button>
                   </DialogTrigger>
                   <DialogContent>
-                    <DialogHeader><DialogTitle>Modifier — Dr {m.prenom} {m.nom}</DialogTitle></DialogHeader>
+                    <DialogHeader><DialogTitle>Modifier : Dr {m.prenom} {m.nom}</DialogTitle></DialogHeader>
                     <div className="space-y-3">
                       <div className="grid gap-3 sm:grid-cols-2">
                         <div className="space-y-1.5"><Label>Nom</Label><Input defaultValue={m.nom} /></div>

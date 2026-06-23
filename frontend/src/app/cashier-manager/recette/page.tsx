@@ -17,7 +17,7 @@ export default function RecetteManagerPage() {
     <main className="space-y-6">
       <div>
         <h1 className="text-xl font-bold text-primary">{fmt(total)}</h1>
-        <p className="text-sm text-muted-foreground">Recette globale — 23 juin 2026</p>
+        <p className="text-sm text-muted-foreground">Recette globale · 23 juin 2026</p>
       </div>
 
       <Tabs defaultValue="globale" className="space-y-4">

@@ -11,7 +11,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen">
-      {/* Panneau gauche — identité visuelle */}
+      {/* Panneau gauche - identité visuelle */}
       <div className="relative hidden flex-col justify-between overflow-hidden bg-[#004D40] p-12 lg:flex lg:w-[45%]">
         {/* Motif décoratif */}
         <div className="pointer-events-none absolute inset-0">
@@ -50,7 +50,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Panneau droit — formulaire */}
+      {/* Panneau droit - formulaire */}
       <div className="flex flex-1 flex-col items-center justify-center bg-white px-8 py-12">
         <div className="w-full max-w-sm space-y-8">
 

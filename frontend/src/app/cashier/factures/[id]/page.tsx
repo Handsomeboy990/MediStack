@@ -103,7 +103,7 @@ export default function DetailFacturePage({ params }: { params: { id: string } }
               <CardHeader><CardTitle>Traçabilité</CardTitle></CardHeader>
               <CardContent className="space-y-2 text-sm">
                 <div className="flex justify-between"><span className="text-muted-foreground">Agent</span><strong>{f.agent}</strong></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Mode</span><strong>{f.modePaiement ?? '—'}</strong></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Mode</span><strong>{f.modePaiement ?? '-'}</strong></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">Statut</span><Badge variant={STATUT_VARIANTS[f.statut]}>{STATUT_LABELS[f.statut]}</Badge></div>
               </CardContent>
             </Card>
@@ -129,7 +129,7 @@ export default function DetailFacturePage({ params }: { params: { id: string } }
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>Demande d&apos;annulation — {f.id}</DialogTitle>
+                        <DialogTitle>Demande d&apos;annulation : {f.id}</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-3">
                         <p className="text-sm text-muted-foreground">Patient : <strong>{f.patient}</strong> · Montant : <strong>{fmt(f.net)}</strong></p>

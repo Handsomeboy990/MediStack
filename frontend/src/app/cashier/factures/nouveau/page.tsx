@@ -61,7 +61,7 @@ export default function NouvelleFacturePage() {
                   onChange={(e) => setPatientId(e.target.value)}
                 >
                   {PATIENTS.map((p) => (
-                    <option key={p.id} value={p.id}>{p.prenom} {p.nom} — {p.telephone}</option>
+                    <option key={p.id} value={p.id}>{p.prenom} {p.nom} · {p.telephone}</option>
                   ))}
                 </select>
               </div>
@@ -69,7 +69,7 @@ export default function NouvelleFacturePage() {
                 <div className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
                   <span>Assuré :</span>
                   <Badge variant="success">{patient.assurance}</Badge>
-                  <span>— {patient.tauxCouverture}% pris en charge</span>
+                  <span>· {patient.tauxCouverture}% pris en charge</span>
                 </div>
               )}
               <div className="grid gap-3 sm:grid-cols-2">

@@ -56,7 +56,7 @@ export default function PatientsPage() {
                 <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
                   <option value="">Aucune</option>
                   {ASSURANCES.filter((a) => a.actif).map((a) => (
-                    <option key={a.id} value={a.code}>{a.code} — {a.nom}</option>
+                    <option key={a.id} value={a.code}>{a.code} · {a.nom}</option>
                   ))}
                 </select>
               </div>
@@ -84,7 +84,7 @@ export default function PatientsPage() {
               </div>
               <div className="flex items-center gap-2">
                 {p.assurance ? (
-                  <Badge variant="success">{p.assurance} — {p.tauxCouverture}%</Badge>
+                  <Badge variant="success">{p.assurance} · {p.tauxCouverture}%</Badge>
                 ) : (
                   <Badge variant="secondary">Sans assurance</Badge>
                 )}

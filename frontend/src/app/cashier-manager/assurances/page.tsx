@@ -56,7 +56,7 @@ export default function AssurancesPage() {
                     <Button variant="outline" size="sm" className="gap-1"><Pencil className="h-3.5 w-3.5" />Modifier</Button>
                   </DialogTrigger>
                   <DialogContent>
-                    <DialogHeader><DialogTitle>Modifier — {a.code}</DialogTitle></DialogHeader>
+                    <DialogHeader><DialogTitle>Modifier : {a.code}</DialogTitle></DialogHeader>
                     <div className="space-y-3">
                       <div className="grid gap-3 sm:grid-cols-2">
                         <div className="space-y-1.5"><Label>Code</Label><Input defaultValue={a.code} /></div>

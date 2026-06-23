@@ -35,7 +35,7 @@ export default function CashierPage() {
     <main className="space-y-6">
       <div>
         <h1 className="text-xl font-bold text-foreground">Bonjour, Ahouansou B.</h1>
-        <p className="text-sm text-muted-foreground">Lundi 23 juin 2026 — Caisse ouverte</p>
+        <p className="text-sm text-muted-foreground">Lundi 23 juin 2026 · Caisse ouverte</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

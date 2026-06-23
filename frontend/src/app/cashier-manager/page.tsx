@@ -29,7 +29,7 @@ export default function CashierManagerPage() {
     <main className="space-y-6">
       <div>
         <h1 className="text-xl font-bold text-foreground">Tableau de bord</h1>
-        <p className="text-sm text-muted-foreground">23 juin 2026 — Responsable de caisse</p>
+        <p className="text-sm text-muted-foreground">23 juin 2026 · Responsable de caisse</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

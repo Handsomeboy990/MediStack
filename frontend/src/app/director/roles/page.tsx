@@ -6,7 +6,7 @@ const roles = [
   {
     id: 'R-01',
     nom: 'Promoteur',
-    description: 'Accès total — gestion des utilisateurs, statistiques globales, supervision.',
+    description: 'Accès total : gestion des utilisateurs, statistiques globales, supervision.',
     permissions: ['Tableau de bord global', 'Gestion utilisateurs', 'Gestion des rôles', 'Statistiques complètes', 'Suppression de comptes'],
     utilisateurs: 1,
   },

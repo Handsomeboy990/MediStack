@@ -17,7 +17,7 @@ export default function RecettePage() {
     <main className="space-y-6">
       <div>
         <h1 className="text-xl font-bold text-primary">{fmt(encaisse)}</h1>
-        <p className="text-sm text-muted-foreground">Recette de {myAgent} — 23 juin 2026</p>
+        <p className="text-sm text-muted-foreground">Recette de {myAgent} · 23 juin 2026</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -55,7 +55,7 @@ export default function RecettePage() {
             <div key={f.id} className="flex items-center justify-between rounded-xl border border-border p-3 text-sm">
               <div>
                 <p className="font-medium">{f.patient}</p>
-                <p className="text-xs text-muted-foreground">{f.id} · {f.modePaiement ?? '—'}</p>
+                <p className="text-xs text-muted-foreground">{f.id} · {f.modePaiement ?? '-'}</p>
               </div>
               <div className="flex items-center gap-3">
                 <p className="font-semibold">{fmt(f.verse)}</p>
