@@ -1,4 +1,6 @@
-import { STATUT_LABELS, fmt } from './mock-data';
+import { CLINIQUE, LOGICIEL, STATUT_LABELS, fmt } from './mock-data';
+
+const genereLe = () => `Document généré le ${new Date().toLocaleString('fr-FR')} par ${LOGICIEL}.`;
 
 // Données minimales nécessaires pour imprimer une facture ou un ticket. Couvre
 // aussi bien une facture enregistrée qu'une facture en cours de saisie.
@@ -72,7 +74,7 @@ export function printFacture(f: PrintableFacture) {
   `;
   const body = `
     <div class="head">
-      <div><h1>MediTrace</h1><p>Centre de santé · Cotonou, Bénin</p><p>Tél : 01 90 00 00 00</p></div>
+      <div><h1>${CLINIQUE.nom}</h1><p>${CLINIQUE.adresse}</p><p>Tél : ${CLINIQUE.telephone} · ${CLINIQUE.email}</p><p>${CLINIQUE.ifu}</p></div>
       <div class="meta"><h2>FACTURE</h2><p>${f.id}</p><p>${f.date}</p></div>
     </div>
     <div class="parties">
@@ -92,7 +94,7 @@ export function printFacture(f: PrintableFacture) {
       <div><span>Versé</span><span>${fmt(f.verse)}</span></div>
       ${reste > 0 ? `<div><span>Reste à payer</span><span>${fmt(reste)}</span></div>` : ''}
     </div>
-    <footer>Merci de votre confiance. Document généré le ${new Date().toLocaleString('fr-FR')}.</footer>
+    <footer>Merci de votre confiance.<br>${genereLe()}</footer>
   `;
   openDocument(`Facture ${f.id}`, css, body);
 }
@@ -112,7 +114,7 @@ export function printTicket(f: PrintableFacture, rendu = 0, monnaieRendue = true
     .small { font-size: 11px; color: #555; }
   `;
   const body = `
-    <div class="t"><h1>MediTrace</h1><p class="small">Reçu de caisse</p></div>
+    <div class="t"><h1>${CLINIQUE.nom}</h1><p class="small">${CLINIQUE.adresse} · ${CLINIQUE.telephone}</p><p class="small">Reçu de caisse</p></div>
     <hr>
     <p class="small">${f.id} · ${f.date}</p>
     <p class="small">Patient : ${f.patient}</p>
@@ -130,6 +132,7 @@ export function printTicket(f: PrintableFacture, rendu = 0, monnaieRendue = true
     <div class="tot"><span>Mode</span><span>${f.modePaiement ?? '-'}</span></div>
     <hr>
     <div class="t small">Merci de votre visite</div>
+    <div class="t small" style="margin-top:6px;color:#888">${genereLe()}</div>
   `;
   openDocument(`Ticket ${f.id}`, css, body);
 }
@@ -164,7 +167,7 @@ export function printBonCommande(lignes: CommandeLigne[]) {
   `;
   const body = `
     <div class="head">
-      <div><h1>MediTrace</h1><p>Magasin central · Cotonou, Bénin</p></div>
+      <div><h1>${CLINIQUE.nom}</h1><p>Magasin central · ${CLINIQUE.adresse}</p><p>Tél : ${CLINIQUE.telephone}</p></div>
       <div class="meta"><h2>BON DE COMMANDE</h2><p>${new Date().toLocaleDateString('fr-FR')}</p></div>
     </div>
     <table>
@@ -173,6 +176,7 @@ export function printBonCommande(lignes: CommandeLigne[]) {
       <tfoot><tr><td colspan="4" class="r">Total estimé</td><td class="r">${fmt(total)}</td></tr></tfoot>
     </table>
     <footer><div>Établi par : ____________________</div><div>Visa responsable : ____________________</div></footer>
+    <p style="margin-top:24px;font-size:11px;color:#888;text-align:center">${genereLe()}</p>
   `;
   openDocument('Bon de commande', css, body);
 }
