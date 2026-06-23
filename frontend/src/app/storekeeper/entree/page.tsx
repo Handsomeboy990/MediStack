@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { STOCK_ARTICLES } from '@/lib/mock-data';
 
 export default function EntreeStockPage() {
@@ -31,16 +32,16 @@ export default function EntreeStockPage() {
               <>
                 <div className="space-y-1.5">
                   <Label>Article</Label>
-                  <select
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                    value={article}
-                    onChange={(e) => setArticle(e.target.value)}
-                  >
-                    <option value="">Sélectionner un article…</option>
-                    {STOCK_ARTICLES.map((a) => (
-                      <option key={a.id} value={a.id}>{a.libelle} (stock actuel : {a.quantite})</option>
-                    ))}
-                  </select>
+                  <Select value={article} onValueChange={setArticle}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner un article" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {STOCK_ARTICLES.map((a) => (
+                        <SelectItem key={a.id} value={a.id}>{a.libelle} (stock actuel : {a.quantite})</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-1.5">
                   <Label>Quantité reçue</Label>

@@ -9,6 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UTILISATEURS, ROLES_LIST } from '@/lib/mock-data';
 
 export default function DirectorUtilisateursPage() {
@@ -41,9 +42,14 @@ export default function DirectorUtilisateursPage() {
               <div className="space-y-1.5"><Label>Téléphone</Label><Input /></div>
               <div className="space-y-1.5">
                 <Label>Rôle</Label>
-                <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                  {ROLES_LIST.map((r) => <option key={r}>{r}</option>)}
-                </select>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner un rôle" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ROLES_LIST.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-1.5"><Label>Mot de passe</Label><Input type="password" /></div>
             </div>
@@ -83,9 +89,14 @@ export default function DirectorUtilisateursPage() {
                       <div className="space-y-1.5"><Label>Email</Label><Input defaultValue={u.email} /></div>
                       <div className="space-y-1.5">
                         <Label>Rôle</Label>
-                        <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" defaultValue={u.role}>
-                          {ROLES_LIST.map((r) => <option key={r}>{r}</option>)}
-                        </select>
+                        <Select defaultValue={u.role}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {ROLES_LIST.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                     <DialogFooter>

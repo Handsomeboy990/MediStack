@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { STOCK_ARTICLES } from '@/lib/mock-data';
 
@@ -18,20 +19,30 @@ export default function AjustementPage() {
         <CardContent className="space-y-4">
           <div className="space-y-1.5">
             <Label>Article</Label>
-            <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-              {STOCK_ARTICLES.map((a) => (
-                <option key={a.id} value={a.id}>{a.libelle} · stock actuel : {a.quantite}</option>
-              ))}
-            </select>
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionner un article" />
+              </SelectTrigger>
+              <SelectContent>
+                {STOCK_ARTICLES.map((a) => (
+                  <SelectItem key={a.id} value={a.id}>{a.libelle} · stock actuel : {a.quantite}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label>Type</Label>
-              <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                <option value="PLUS">Ajustement positif (+)</option>
-                <option value="MINUS">Ajustement négatif (−)</option>
-              </select>
+              <Select defaultValue="PLUS">
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="PLUS">Ajustement positif (+)</SelectItem>
+                  <SelectItem value="MINUS">Ajustement négatif (−)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-1.5">
               <Label>Quantité à ajuster</Label>

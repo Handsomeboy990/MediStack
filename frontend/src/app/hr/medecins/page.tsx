@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MEDECINS, SPECIALITES } from '@/lib/mock-data';
 
 export default function MedecinsPage() {
@@ -39,9 +40,14 @@ export default function MedecinsPage() {
               </div>
               <div className="space-y-1.5">
                 <Label>Spécialité</Label>
-                <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                  {SPECIALITES.map((s) => <option key={s}>{s}</option>)}
-                </select>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner une spécialité" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SPECIALITES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-1.5"><Label>Téléphone</Label><Input placeholder="97 XX XX XX" /></div>
               <div className="space-y-1.5"><Label>Email</Label><Input type="email" placeholder="medecin@clinicflow.bj" /></div>
@@ -80,18 +86,28 @@ export default function MedecinsPage() {
                       </div>
                       <div className="space-y-1.5">
                         <Label>Spécialité</Label>
-                        <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" defaultValue={m.specialite}>
-                          {SPECIALITES.map((s) => <option key={s}>{s}</option>)}
-                        </select>
+                        <Select defaultValue={m.specialite}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {SPECIALITES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
                       </div>
                       <div className="space-y-1.5"><Label>Téléphone</Label><Input defaultValue={m.telephone} /></div>
                       <div className="space-y-1.5"><Label>Email</Label><Input defaultValue={m.email} /></div>
                       <div className="space-y-1.5">
                         <Label>Statut</Label>
-                        <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" defaultValue={m.actif ? 'actif' : 'inactif'}>
-                          <option value="actif">Actif</option>
-                          <option value="inactif">Inactif</option>
-                        </select>
+                        <Select defaultValue={m.actif ? 'actif' : 'inactif'}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="actif">Actif</SelectItem>
+                            <SelectItem value="inactif">Inactif</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                     <DialogFooter>

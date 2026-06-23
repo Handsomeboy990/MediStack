@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PATIENTS, PRESTATIONS, fmt } from '@/lib/mock-data';
 
 type Ligne = { libelle: string; qte: number; pu: number };
@@ -55,15 +56,16 @@ export default function NouvelleFacturePage() {
             <CardContent className="space-y-3">
               <div className="space-y-1.5">
                 <Label>Sélectionner un patient</Label>
-                <select
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                  value={patientId}
-                  onChange={(e) => setPatientId(e.target.value)}
-                >
-                  {PATIENTS.map((p) => (
-                    <option key={p.id} value={p.id}>{p.prenom} {p.nom} · {p.telephone}</option>
-                  ))}
-                </select>
+                <Select value={patientId} onValueChange={setPatientId}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PATIENTS.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>{p.prenom} {p.nom} · {p.telephone}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               {patient.assurance && (
                 <div className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
@@ -75,19 +77,29 @@ export default function NouvelleFacturePage() {
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
                   <Label>Médecin prescripteur</Label>
-                  <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                    <option>Dr Agossou C.</option>
-                    <option>Dr Bossa I.</option>
-                    <option>Dr Capo L.</option>
-                  </select>
+                  <Select defaultValue="Dr Agossou C.">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Dr Agossou C.">Dr Agossou C.</SelectItem>
+                      <SelectItem value="Dr Bossa I.">Dr Bossa I.</SelectItem>
+                      <SelectItem value="Dr Capo L.">Dr Capo L.</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-1.5">
                   <Label>Médecin exécutant</Label>
-                  <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                    <option>Dr Bossa I.</option>
-                    <option>Dr Agossou C.</option>
-                    <option>Dr Capo L.</option>
-                  </select>
+                  <Select defaultValue="Dr Bossa I.">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Dr Bossa I.">Dr Bossa I.</SelectItem>
+                      <SelectItem value="Dr Agossou C.">Dr Agossou C.</SelectItem>
+                      <SelectItem value="Dr Capo L.">Dr Capo L.</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </CardContent>
@@ -112,20 +124,20 @@ export default function NouvelleFacturePage() {
               ))}
 
               <div className="flex gap-2 rounded-xl border border-dashed border-border p-3">
-                <select
-                  className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  value={selectedPrestationValue}
-                  onChange={(e) => {
-                    setSelectedPrestationValue(e.target.value);
-                    const p = PRESTATIONS.find((pr) => pr.libelle === e.target.value);
-                    if (p) { setNewLibelle(p.libelle); setNewPu(p.tarif); }
-                  }}
-                >
-                  <option value="">Choisir une prestation…</option>
-                  {PRESTATIONS.filter((p) => p.actif).map((p) => (
-                    <option key={p.id}>{p.libelle}</option>
-                  ))}
-                </select>
+                <Select value={selectedPrestationValue} onValueChange={(value) => {
+                  setSelectedPrestationValue(value);
+                  const p = PRESTATIONS.find((pr) => pr.libelle === value);
+                  if (p) { setNewLibelle(p.libelle); setNewPu(p.tarif); }
+                }}>
+                  <SelectTrigger className="flex-1">
+                    <SelectValue placeholder="Choisir une prestation..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PRESTATIONS.filter((p) => p.actif).map((p) => (
+                      <SelectItem key={p.id} value={p.libelle}>{p.libelle}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <Input className="w-20" type="number" min={1} value={newQte} onChange={(e) => setNewQte(+e.target.value)} placeholder="Qté" />
                 <Button size="sm" onClick={addLigne} variant="brand" className="gap-1 ">
                   <Plus className="h-4 w-4" />

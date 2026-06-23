@@ -9,8 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { PATIENTS, ASSURANCES } from '@/lib/mock-data';
+import { Label } from '@/components/ui/label';import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';import { PATIENTS, ASSURANCES } from '@/lib/mock-data';
 
 export default function PatientsPage() {
   const [search, setSearch] = useState('');
@@ -53,12 +52,17 @@ export default function PatientsPage() {
               <div className="space-y-1.5"><Label>Adresse</Label><Input placeholder="Cotonou, Zongo" /></div>
               <div className="space-y-1.5">
                 <Label>Assurance</Label>
-                <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
-                  <option value="">Aucune</option>
-                  {ASSURANCES.filter((a) => a.actif).map((a) => (
-                    <option key={a.id} value={a.code}>{a.code} · {a.nom}</option>
-                  ))}
-                </select>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner une assurance" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Aucune</SelectItem>
+                    {ASSURANCES.filter((a) => a.actif).map((a) => (
+                      <SelectItem key={a.id} value={a.code}>{a.code} · {a.nom}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-1.5"><Label>Numéro de police</Label><Input placeholder="CNSS-XXXX" /></div>
               <div className="space-y-1.5"><Label>Contact urgence</Label><Input placeholder="Nom et téléphone" /></div>
