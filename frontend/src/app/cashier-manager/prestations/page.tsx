@@ -24,7 +24,7 @@ export default function PrestationsPage() {
         <h1 className="text-lg font-bold">Gestion des prestations</h1>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="gap-2 bg-[#004D40] text-white hover:bg-[#003830]">
+            <Button variant="brand" className="gap-2 ">
               <Plus className="h-4 w-4" /> Nouvelle prestation
             </Button>
           </DialogTrigger>
@@ -45,7 +45,7 @@ export default function PrestationsPage() {
             </div>
             <DialogFooter>
               <Button variant="outline">Annuler</Button>
-              <Button className="bg-[#004D40] text-white hover:bg-[#003830]">Enregistrer</Button>
+              <Button variant="brand" className="">Enregistrer</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -93,7 +93,7 @@ export default function PrestationsPage() {
                     </div>
                     <DialogFooter>
                       <Button variant="outline">Annuler</Button>
-                      <Button className="bg-[#004D40] text-white hover:bg-[#003830]">Enregistrer</Button>
+                      <Button variant="brand" className="">Enregistrer</Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>

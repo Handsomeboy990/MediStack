@@ -92,7 +92,7 @@ export default function DetailFacturePage({ params }: { params: { id: string } }
                     <div className="space-y-1.5"><Label>Mobile money</Label><Input type="number" placeholder="0" /></div>
                     <div className="space-y-1.5"><Label>Référence mobile</Label><Input placeholder="MM-XXXXX" /></div>
                     <div className="flex gap-3">
-                      <Button className="flex-1 bg-[#004D40] text-white hover:bg-[#003830]">Encaisser</Button>
+                      <Button variant="brand" className="flex-1 ">Encaisser</Button>
                       <Button variant="outline" className="flex-1">Paiement partiel</Button>
                     </div>
                   </>

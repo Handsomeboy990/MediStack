@@ -39,7 +39,7 @@ export default function AlertesPage() {
                     </div>
                     <Badge variant={isRupture ? 'destructive' : 'warning'}>{isRupture ? 'Rupture' : 'Seuil atteint'}</Badge>
                     <Link href="/storekeeper/entree">
-                      <Button size="sm" className="bg-[#004D40] text-white hover:bg-[#003830]">Commander</Button>
+                      <Button size="sm" variant="brand" className="">Commander</Button>
                     </Link>
                   </div>
                 </CardContent>

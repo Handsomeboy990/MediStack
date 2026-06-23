@@ -63,7 +63,7 @@ export default function ProfilPage() {
                 </div>
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setOpen(false)}>Annuler</Button>
-                  <Button className="bg-[#004D40] text-white hover:bg-[#003830]">Enregistrer</Button>
+                  <Button variant="brand" className="">Enregistrer</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>

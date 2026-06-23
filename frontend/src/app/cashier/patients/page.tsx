@@ -35,7 +35,7 @@ export default function PatientsPage() {
         </div>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="gap-2 bg-[#004D40] text-white hover:bg-[#003830]">
+            <Button variant="brand" className="gap-2 ">
               <Plus className="h-4 w-4" /> Nouveau patient
             </Button>
           </DialogTrigger>
@@ -65,7 +65,7 @@ export default function PatientsPage() {
             </div>
             <DialogFooter>
               <Button variant="outline">Annuler</Button>
-              <Button className="bg-[#004D40] text-white hover:bg-[#003830]">Enregistrer</Button>
+              <Button variant="brand" className="">Enregistrer</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

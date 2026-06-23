@@ -55,7 +55,7 @@ export default function FichePatientPage({ params }: { params: { id: string } })
             )}
             <Separator />
             <Link href={`/cashier/factures/nouveau?patient=${patient.id}`}>
-              <Button className="w-full bg-[#004D40] text-white hover:bg-[#003830] gap-2">
+              <Button variant="brand" className="w-full  gap-2">
                 <FileText className="h-4 w-4" /> Nouvelle facture pour ce patient
               </Button>
             </Link>

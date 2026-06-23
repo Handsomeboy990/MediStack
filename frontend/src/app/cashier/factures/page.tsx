@@ -19,7 +19,7 @@ export default function FacturesListPage() {
           <p className="text-sm text-muted-foreground">23 juin 2026 · {factures.length} facture(s)</p>
         </div>
         <Link href="/cashier/factures/nouveau">
-          <Button className="gap-2 bg-[#004D40] text-white hover:bg-[#003830]">
+          <Button variant="brand" className="gap-2 ">
             <Plus className="h-4 w-4" /> Nouvelle facture
           </Button>
         </Link>

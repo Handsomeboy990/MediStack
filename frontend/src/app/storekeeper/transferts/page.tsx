@@ -45,7 +45,7 @@ export default function TransfertsPage() {
                 <Input placeholder="Nom du pharmacien" />
               </div>
               <Separator />
-              <Button className="w-full bg-[#004D40] text-white hover:bg-[#003830]">Valider le transfert</Button>
+              <Button variant="brand" className="w-full ">Valider le transfert</Button>
             </CardContent>
           </Card>
         </TabsContent>

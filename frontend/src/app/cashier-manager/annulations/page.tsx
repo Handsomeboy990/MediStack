@@ -54,7 +54,7 @@ export default function AnnulationsPage() {
               onChange={(e) => setComments({ ...comments, [ann.id]: e.target.value })}
             />
             <div className="flex gap-3">
-              <Button className="flex-1 gap-2 bg-[#004D40] text-white hover:bg-[#003830]">
+              <Button variant="brand" className="flex-1 gap-2 ">
                 <CheckCircle2 className="h-4 w-4" /> Approuver
               </Button>
               <Button variant="destructive" className="flex-1 gap-2">

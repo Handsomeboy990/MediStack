@@ -10,6 +10,7 @@ const buttonVariants = {
   outline: 'border border-border bg-background shadow-sm hover:bg-accent hover:text-accent-foreground',
   ghost: 'hover:bg-accent hover:text-accent-foreground',
   destructive: 'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
+  brand: 'bg-[#004D40] text-white shadow-sm hover:bg-[#003830]',
 } as const;
 
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {

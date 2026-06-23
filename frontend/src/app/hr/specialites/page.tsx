@@ -20,7 +20,7 @@ export default function SpecialitesPage() {
         <h1 className="text-lg font-bold">Liste des spécialités</h1>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="gap-2 bg-[#004D40] text-white hover:bg-[#003830]">
+            <Button variant="brand" className="gap-2 ">
               <Plus className="h-4 w-4" /> Ajouter
             </Button>
           </DialogTrigger>
@@ -33,7 +33,7 @@ export default function SpecialitesPage() {
             <DialogFooter>
               <Button variant="outline">Annuler</Button>
               <Button
-                className="bg-[#004D40] text-white hover:bg-[#003830]"
+                variant="brand" className=""
                 onClick={() => { if (newSpec.trim()) { setSpecs([...specs, newSpec.trim()]); setNewSpec(''); } }}
               >
                 Ajouter

@@ -59,7 +59,7 @@ export default function EntreeStockPage() {
                   <Input placeholder="BL-XXXXX" />
                 </div>
                 <Button
-                  className="w-full bg-[#004D40] text-white hover:bg-[#003830]"
+                  variant="brand" className="w-full "
                   onClick={() => setSubmitted(true)}
                   disabled={!article || !qte}
                 >

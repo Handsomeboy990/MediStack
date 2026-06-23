@@ -127,7 +127,7 @@ export default function NouvelleFacturePage() {
                   ))}
                 </select>
                 <Input className="w-20" type="number" min={1} value={newQte} onChange={(e) => setNewQte(+e.target.value)} placeholder="Qté" />
-                <Button size="sm" onClick={addLigne} className="gap-1 bg-[#004D40] text-white hover:bg-[#003830]">
+                <Button size="sm" onClick={addLigne} variant="brand" className="gap-1 ">
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
@@ -144,7 +144,7 @@ export default function NouvelleFacturePage() {
               <Separator />
               <div className="flex justify-between text-base"><span className="font-semibold">Net à payer</span><strong className="text-primary">{fmt(net)}</strong></div>
             </div>
-            <Button className="w-full bg-[#004D40] text-white hover:bg-[#003830]">Valider la facture</Button>
+            <Button variant="brand" className="w-full ">Valider la facture</Button>
             <Button variant="outline" className="w-full">Enregistrer en brouillon</Button>
           </CardContent>
         </Card>

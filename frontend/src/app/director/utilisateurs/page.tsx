@@ -26,7 +26,7 @@ export default function DirectorUtilisateursPage() {
         <h1 className="text-lg font-bold">Gestion des utilisateurs</h1>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="gap-2 bg-[#004D40] text-white hover:bg-[#003830]">
+            <Button variant="brand" className="gap-2 ">
               <Plus className="h-4 w-4" /> Nouveau
             </Button>
           </DialogTrigger>
@@ -49,7 +49,7 @@ export default function DirectorUtilisateursPage() {
             </div>
             <DialogFooter>
               <Button variant="outline">Annuler</Button>
-              <Button className="bg-[#004D40] text-white hover:bg-[#003830]">Créer</Button>
+              <Button variant="brand" className="">Créer</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -90,12 +90,12 @@ export default function DirectorUtilisateursPage() {
                     </div>
                     <DialogFooter>
                       <Button variant="outline">Annuler</Button>
-                      <Button className="bg-[#004D40] text-white hover:bg-[#003830]">Enregistrer</Button>
+                      <Button variant="brand" className="">Enregistrer</Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
 
-                <Button size="sm" variant={u.actif ? 'destructive' : 'default'} className={`gap-1 ${!u.actif ? 'bg-[#004D40] text-white hover:bg-[#003830]' : ''}`}>
+                <Button size="sm" variant={u.actif ? 'destructive' : 'brand'} className="gap-1">
                   {u.actif ? <><XCircle className="h-3.5 w-3.5" /></> : <><CheckCircle2 className="h-3.5 w-3.5" /></>}
                 </Button>
 

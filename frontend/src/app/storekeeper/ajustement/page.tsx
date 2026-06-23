@@ -49,7 +49,7 @@ export default function AjustementPage() {
             <Input type="date" defaultValue="2026-06-23" />
           </div>
 
-          <Button className="w-full bg-[#004D40] text-white hover:bg-[#003830]">Valider l&apos;ajustement</Button>
+          <Button variant="brand" className="w-full ">Valider l&apos;ajustement</Button>
         </CardContent>
       </Card>
     </main>
