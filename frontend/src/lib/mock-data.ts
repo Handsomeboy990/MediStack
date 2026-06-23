@@ -161,7 +161,7 @@ export const UTILISATEURS: Utilisateur[] = [
   { id: 'U-003', nom: 'Dossou', prenom: 'Roland', email: 'r.dossou@clinicflow.bj', telephone: '96 33 44 55', role: 'Responsable de caisse', actif: false, creeLe: '2025-02-15' },
   { id: 'U-004', nom: 'Hodonou', prenom: 'Fiacre', email: 'f.hodonou@clinicflow.bj', telephone: '97 44 55 66', role: 'Agent magasinier', actif: true, creeLe: '2025-03-01' },
   { id: 'U-005', nom: 'Lawson', prenom: 'Martine', email: 'm.lawson@clinicflow.bj', telephone: '95 55 66 77', role: 'Ressources humaines', actif: true, creeLe: '2025-01-05' },
-  { id: 'U-006', nom: 'Gbaguidi', prenom: 'Achille', email: 'a.gbaguidi@clinicflow.bj', telephone: '96 66 77 88', role: 'Promoteur', actif: true, creeLe: '2024-12-01' },
+  { id: 'U-006', nom: 'Gbaguidi', prenom: 'Achille', email: 'a.gbaguidi@clinicflow.bj', telephone: '96 66 77 88', role: 'Administrateur', actif: true, creeLe: '2024-12-01' },
 ];
 
 // ─── Médecins ────────────────────────────────────────────────
@@ -188,7 +188,7 @@ export const SPECIALITES = [
 ];
 
 export const ROLES_LIST = [
-  'Promoteur', 'Responsable de caisse', 'Agent de caisse', 'Agent magasinier', 'Ressources humaines',
+  'Administrateur', 'Responsable de caisse', 'Agent de caisse', 'Agent magasinier', 'Ressources humaines',
 ];
 
 // ─── Helpers ─────────────────────────────────────────────────

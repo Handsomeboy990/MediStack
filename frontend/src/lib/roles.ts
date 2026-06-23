@@ -10,7 +10,7 @@ export interface RoleDefinition {
 export const ROLES: RoleDefinition[] = [
   {
     slug: 'director',
-    nom: 'Promoteur',
+    nom: 'Administrateur',
     description: 'Vision globale, statistiques et supervision du centre.',
   },
   {

@@ -5,7 +5,7 @@ import { Separator } from '@/components/ui/separator';
 const roles = [
   {
     id: 'R-01',
-    nom: 'Promoteur',
+    nom: 'Administrateur',
     description: 'Accès total : gestion des utilisateurs, statistiques globales, supervision.',
     permissions: ['Tableau de bord global', 'Gestion utilisateurs', 'Gestion des rôles', 'Statistiques complètes', 'Suppression de comptes'],
     utilisateurs: 1,

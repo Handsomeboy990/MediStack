@@ -2,11 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  AlertTriangle, ArrowDown, ArrowLeftRight, BarChart3, Bell,
-  BookOpen, ClipboardList, LayoutDashboard, LogOut, Receipt,
-  RefreshCw, Shield, Stethoscope, TrendingUp, Users, Warehouse,
-} from 'lucide-react';
+import { Bell, LogOut, Stethoscope } from 'lucide-react';
 
 import {
   Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent,
@@ -14,72 +10,7 @@ import {
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider,
   SidebarRail, SidebarTrigger,
 } from '@/components/ui/sidebar';
-
-type NavItem = { href: string; label: string; icon: React.ElementType };
-type RoleConfig = { label: string; icon: React.ElementType; items: NavItem[] };
-
-const roleNavConfig: Record<string, RoleConfig> = {
-  '/cashier-manager': {
-    label: 'Resp. de caisse',
-    icon: LayoutDashboard,
-    items: [
-      { href: '/cashier-manager', label: 'Tableau de bord', icon: LayoutDashboard },
-      { href: '/cashier-manager/factures', label: 'Factures', icon: Receipt },
-      { href: '/cashier-manager/annulations', label: 'Annulations', icon: AlertTriangle },
-      { href: '/cashier-manager/recette', label: 'Recette', icon: TrendingUp },
-      { href: '/cashier-manager/prestations', label: 'Prestations', icon: Stethoscope },
-      { href: '/cashier-manager/assurances', label: 'Assurances', icon: Shield },
-    ],
-  },
-  '/cashier': {
-    label: 'Agent de caisse',
-    icon: ClipboardList,
-    items: [
-      { href: '/cashier', label: 'Tableau de bord', icon: LayoutDashboard },
-      { href: '/cashier/patients', label: 'Patients', icon: Users },
-      { href: '/cashier/factures', label: 'Factures', icon: Receipt },
-      { href: '/cashier/recette', label: 'Ma recette', icon: TrendingUp },
-    ],
-  },
-  '/storekeeper': {
-    label: 'Magasinier',
-    icon: Warehouse,
-    items: [
-      { href: '/storekeeper', label: 'Tableau de bord', icon: LayoutDashboard },
-      { href: '/storekeeper/entree', label: 'Entrée stock', icon: ArrowDown },
-      { href: '/storekeeper/ajustement', label: 'Ajustement', icon: RefreshCw },
-      { href: '/storekeeper/transferts', label: 'Transferts', icon: ArrowLeftRight },
-      { href: '/storekeeper/alertes', label: 'Alertes rupture', icon: AlertTriangle },
-    ],
-  },
-  '/hr': {
-    label: 'Ressources humaines',
-    icon: Users,
-    items: [
-      { href: '/hr', label: 'Tableau de bord', icon: LayoutDashboard },
-      { href: '/hr/medecins', label: 'Médecins', icon: Stethoscope },
-      { href: '/hr/specialites', label: 'Spécialités', icon: BookOpen },
-      { href: '/hr/utilisateurs', label: 'Utilisateurs', icon: Users },
-    ],
-  },
-  '/director': {
-    label: 'Promoteur',
-    icon: BarChart3,
-    items: [
-      { href: '/director', label: 'Tableau de bord', icon: LayoutDashboard },
-      { href: '/director/stats', label: 'Statistiques', icon: BarChart3 },
-      { href: '/director/utilisateurs', label: 'Utilisateurs', icon: Users },
-      { href: '/director/roles', label: 'Rôles', icon: Shield },
-    ],
-  },
-};
-
-// Order matters: cashier-manager before cashier to avoid prefix collision
-const roleOrder = ['/cashier-manager', '/cashier', '/storekeeper', '/hr', '/director'];
-
-function getCurrentRole(pathname: string) {
-  return roleOrder.find((r) => pathname.startsWith(r)) ?? null;
-}
+import { roleNavConfig, roleOrder, getCurrentRole } from '@/components/sidebar-nav-config';
 
 function AppSidebar() {
   const pathname = usePathname();
