@@ -1,11 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   color-scheme: light;
+  --background: 0 0% 98%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 174 40% 53%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 174 30% 92%;
+  --secondary-foreground: 174 100% 12%;
+  --muted: 174 15% 95%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 174 25% 90%;
+  --accent-foreground: 174 100% 12%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 174 40% 53%;
+  --sidebar-background: 174 40% 53%;
+  --sidebar-foreground: 0 0% 95%;
+  --sidebar-primary: 174 45% 45%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 174 35% 40%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-border: 174 30% 35%;
+  --sidebar-ring: 174 40% 53%;
 }
 
 body {
-  @apply bg-gray-50 text-gray-900 antialiased;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: Montserrat, sans-serif;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+/* Masque les flèches haut/bas des champs numériques (montants de paiement). */
+input.no-arrows::-webkit-outer-spin-button,
+input.no-arrows::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input.no-arrows {
+  -moz-appearance: textfield;
 }

@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
+import { AppShell } from '@/components/app-sidebar';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'MediTrust',
+  title: 'MediTrace',
   description: 'Gestion de caisse, de facturation et de stock pour les centres de santé',
 };
 
@@ -13,7 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body>{children}</body>
+      <body className="min-h-screen bg-background text-foreground antialiased">
+        <AppShell>{children}</AppShell>
+      </body>
     </html>
   );
 }
