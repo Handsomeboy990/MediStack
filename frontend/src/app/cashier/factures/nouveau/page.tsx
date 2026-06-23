@@ -2,28 +2,33 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, FileText, Lock, Plus, Printer, ShieldCheck, Trash2, User, XCircle } from 'lucide-react';
+import { ArrowLeft, FileText, Lock, Plus, Printer, ShieldCheck, Stethoscope, Trash2, User, XCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SearchableSelect } from '@/components/searchable-select';
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { PRESTATIONS, fmt } from '@/lib/mock-data';
+import { MEDECINS, PRESTATIONS, fmt } from '@/lib/mock-data';
 import { usePatients } from '@/lib/patients-store';
 
 type Ligne = { libelle: string; qte: number; pu: number };
+
+const MODES_PAIEMENT = ['Espèces', 'MTN MoMo', 'Moov Money', 'Celtiis Cash', 'Chèque', 'Virement bancaire'];
+const medecinOptions = MEDECINS.map((m) => ({ value: m.id, label: `Dr ${m.prenom} ${m.nom}`, hint: m.specialite }));
+const prestationOptions = PRESTATIONS.filter((p) => p.actif).map((p) => ({ value: p.libelle, label: p.libelle, hint: fmt(p.tarif) }));
 
 export default function NouvelleFacturePage() {
   const patients = usePatients();
   const [patientId, setPatientId] = useState(patients[0]?.id ?? '');
   const [carteId, setCarteId] = useState('aucune');
+  const [prescripteur, setPrescripteur] = useState('M-001');
+  const [executant, setExecutant] = useState('M-002');
   const [lignes, setLignes] = useState<Ligne[]>([{ libelle: 'Consultation générale', qte: 1, pu: 5000 }]);
-  const [newLibelle, setNewLibelle] = useState('');
-  const [newQte, setNewQte] = useState(1);
-  const [newPu, setNewPu] = useState(0);
   const [prestation, setPrestation] = useState('');
+  const [newQte, setNewQte] = useState(1);
+  const [mode, setMode] = useState('Espèces');
   const [montantRecu, setMontantRecu] = useState('');
 
   const patient = patients.find((p) => p.id === patientId) ?? patients[0];
@@ -34,13 +39,18 @@ export default function NouvelleFacturePage() {
   const net = brut - assurance;
   const rendu = Math.max(0, Number(montantRecu || 0) - net);
 
+  const patientOptions = patients.map((p) => ({ value: p.id, label: `${p.prenom} ${p.nom}`, hint: p.telephone }));
+  const carteOptions = [
+    { value: 'aucune', label: 'Aucune assurance' },
+    ...(patient?.cartesAssurance.map((c) => ({ value: c.id, label: `${c.nom} (${c.taux}%)`, hint: c.numeroMatricule })) ?? []),
+  ];
+
   const addLigne = () => {
-    if (!newLibelle.trim()) return;
-    setLignes([...lignes, { libelle: newLibelle, qte: newQte, pu: newPu }]);
-    setNewLibelle('');
-    setNewQte(1);
-    setNewPu(0);
+    const p = PRESTATIONS.find((pr) => pr.libelle === prestation);
+    if (!p) return;
+    setLignes([...lignes, { libelle: p.libelle, qte: newQte, pu: p.tarif }]);
     setPrestation('');
+    setNewQte(1);
   };
 
   return (
@@ -53,44 +63,43 @@ export default function NouvelleFacturePage() {
       </div>
 
       <div className="flex flex-col gap-4 xl:flex-row">
-        {/* Colonne gauche : patient */}
+        {/* Colonne gauche : patient + médecins */}
         <div className="flex w-full shrink-0 flex-col gap-4 xl:w-72">
           <div className="space-y-1.5">
             <Label>Patient</Label>
-            <Select value={patientId} onValueChange={(v) => { setPatientId(v); setCarteId('aucune'); }}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {patients.map((p) => <SelectItem key={p.id} value={p.id}>{p.prenom} {p.nom} · {p.telephone}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <SearchableSelect options={patientOptions} value={patientId} onChange={(v) => { setPatientId(v); setCarteId('aucune'); }} placeholder="Rechercher un patient..." />
           </div>
 
           <Card className="overflow-hidden">
-            <div className="flex items-start justify-between border-b border-border bg-primary/5 p-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10"><User className="h-6 w-6 text-primary" /></div>
-                <div>
-                  <p className="font-semibold leading-tight">{patient?.prenom} {patient?.nom}</p>
-                  <p className="text-xs text-muted-foreground">{patient?.id}</p>
-                </div>
+            <div className="flex items-center gap-3 border-b border-border p-4">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-muted"><User className="h-6 w-6 text-primary" /></div>
+              <div>
+                <p className="font-semibold leading-tight">{patient?.prenom} {patient?.nom}</p>
+                <p className="text-xs text-muted-foreground">{patient?.id}</p>
               </div>
-              <span className="rounded bg-primary px-2 py-0.5 text-[10px] font-bold uppercase text-primary-foreground">Actif</span>
             </div>
             <CardContent className="space-y-3 p-4">
               <div className="space-y-1.5">
                 <Label className="text-xs">Carte d&apos;assurance</Label>
-                <Select value={carteId} onValueChange={setCarteId}>
-                  <SelectTrigger><SelectValue placeholder="Aucune assurance" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="aucune">Aucune assurance</SelectItem>
-                    {patient?.cartesAssurance.map((c) => <SelectItem key={c.id} value={c.id}>{c.nom} · {c.taux}% · {c.numeroMatricule}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <SearchableSelect options={carteOptions} value={carteId} onChange={setCarteId} placeholder="Aucune assurance" />
               </div>
-              <div className="rounded-xl border border-primary/20 bg-primary/5 p-3">
-                <div className="flex items-center gap-2 text-sm"><ShieldCheck className="h-4 w-4 text-primary" /><span className="text-muted-foreground">Couverture</span></div>
-                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{ width: `${taux}%` }} /></div>
-                <p className="mt-1 text-xs font-bold text-primary">{taux}% pris en charge</p>
+              <div className="flex items-center justify-between rounded-lg border border-border p-3 text-sm">
+                <span className="flex items-center gap-2 text-muted-foreground"><ShieldCheck className="h-4 w-4 text-primary" />Couverture</span>
+                <strong className="text-primary">{taux}%</strong>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader><CardTitle className="flex items-center gap-2 text-sm"><Stethoscope className="h-4 w-4 text-primary" />Médecins</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-bold uppercase text-muted-foreground">Prescripteur</Label>
+                <SearchableSelect options={medecinOptions} value={prescripteur} onChange={setPrescripteur} placeholder="Rechercher un médecin..." />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-bold uppercase text-muted-foreground">Exécutant</Label>
+                <SearchableSelect options={medecinOptions} value={executant} onChange={setExecutant} placeholder="Rechercher un médecin..." />
               </div>
             </CardContent>
           </Card>
@@ -98,18 +107,8 @@ export default function NouvelleFacturePage() {
 
         {/* Colonne centrale : actes */}
         <Card className="flex min-h-[460px] flex-1 flex-col overflow-hidden">
-          <CardHeader className="flex-row items-center justify-between space-y-0 border-b border-border bg-muted/40">
+          <CardHeader className="border-b border-border">
             <CardTitle className="flex items-center gap-2 text-base"><FileText className="h-5 w-5 text-primary" />Détails de la facturation</CardTitle>
-            <div className="flex gap-2">
-              <Select defaultValue="Dr Agossou C.">
-                <SelectTrigger className="h-8 w-40 text-xs"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Dr Agossou C.">Presc. : Dr Agossou C.</SelectItem>
-                  <SelectItem value="Dr Bossa I.">Presc. : Dr Bossa I.</SelectItem>
-                  <SelectItem value="Dr Capo L.">Presc. : Dr Capo L.</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </CardHeader>
           <div className="flex-1 overflow-auto">
             <Table>
@@ -146,12 +145,7 @@ export default function NouvelleFacturePage() {
             </Table>
           </div>
           <div className="flex gap-2 border-t border-border p-3">
-            <Select value={prestation} onValueChange={(v) => { setPrestation(v); const p = PRESTATIONS.find((pr) => pr.libelle === v); if (p) { setNewLibelle(p.libelle); setNewPu(p.tarif); } }}>
-              <SelectTrigger className="flex-1"><SelectValue placeholder="Ajouter une prestation..." /></SelectTrigger>
-              <SelectContent>
-                {PRESTATIONS.filter((p) => p.actif).map((p) => <SelectItem key={p.id} value={p.libelle}>{p.libelle} · {fmt(p.tarif)}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <SearchableSelect className="flex-1" options={prestationOptions} value={prestation} onChange={setPrestation} placeholder="Rechercher une prestation..." />
             <Input className="w-20 no-arrows" type="number" min={1} value={newQte} onChange={(e) => setNewQte(+e.target.value)} placeholder="Qté" />
             <Button size="sm" onClick={addLigne} variant="brand" className="gap-1"><Plus className="h-4 w-4" /></Button>
           </div>
@@ -160,15 +154,25 @@ export default function NouvelleFacturePage() {
         {/* Colonne droite : caisse */}
         <div className="flex w-full shrink-0 flex-col gap-4 xl:w-72">
           <Card>
-            <CardContent className="flex flex-col gap-5 p-5">
+            <CardContent className="flex flex-col gap-4 p-5">
               <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Résumé de caisse</p>
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between"><span className="text-muted-foreground">Brut</span><strong>{fmt(brut)}</strong></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">Assurance ({taux}%)</span><strong className="text-emerald-600">-{fmt(assurance)}</strong></div>
               </div>
-              <div className="flex flex-col items-center rounded-xl border border-primary/20 bg-primary/5 py-4">
+              <div className="flex flex-col items-center rounded-xl border border-border bg-muted/40 py-4">
                 <p className="text-[10px] font-bold uppercase text-muted-foreground">Net à payer</p>
                 <p className="text-3xl font-bold text-primary">{fmt(net)}</p>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs uppercase">Mode de paiement</Label>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {MODES_PAIEMENT.map((m) => (
+                    <button key={m} type="button" onClick={() => setMode(m)} className={`rounded-lg border px-2 py-2 text-xs font-medium transition-colors ${mode === m ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground hover:bg-muted'}`}>
+                      {m}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs uppercase">Montant reçu</Label>

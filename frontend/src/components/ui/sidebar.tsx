@@ -191,7 +191,7 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<'div'>) {
 }
 
 function SidebarGroupLabel({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div data-slot="sidebar-group-label" className={cn('group-data-[state=collapsed]/sidebar:hidden px-2 text-xs font-semibold uppercase tracking-wide text-white/50', className)} {...props} />;
+  return <div data-slot="sidebar-group-label" className={cn('group-data-[state=collapsed]/sidebar:hidden px-2 text-xs font-bold uppercase tracking-wider text-white/75', className)} {...props} />;
 }
 
 function SidebarGroupContent({ className, ...props }: React.ComponentProps<'div'>) {
@@ -214,7 +214,7 @@ function SidebarMenuButton({ className, asChild, isActive, ...props }: React.Com
       data-slot="sidebar-menu-button"
       data-active={isActive ? 'true' : 'false'}
       className={cn(
-        'flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-white/80 transition hover:bg-white/10 hover:text-white data-[active=true]:bg-white/15 data-[active=true]:text-white data-[active=true]:font-semibold',
+        'flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-[15px] font-medium text-white/90 transition hover:bg-white/10 hover:text-white data-[active=true]:bg-white/20 data-[active=true]:text-white data-[active=true]:font-bold [&_svg]:h-5 [&_svg]:w-5',
         className,
       )}
       {...props}
