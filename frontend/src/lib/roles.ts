@@ -1,4 +1,4 @@
-// MediTrust application roles and their entry point in the interface.
+// MediTrace application roles and their entry point in the interface.
 // The slug drives the route folder; nom and description are user facing and
 // stay in French.
 export interface RoleDefinition {
@@ -10,7 +10,7 @@ export interface RoleDefinition {
 export const ROLES: RoleDefinition[] = [
   {
     slug: 'director',
-    nom: 'Promoteur',
+    nom: 'Administrateur',
     description: 'Vision globale, statistiques et supervision du centre.',
   },
   {

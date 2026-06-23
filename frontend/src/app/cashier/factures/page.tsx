@@ -1,0 +1,109 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Plus, Search } from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { KpiCard } from '@/components/kpi-card';
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { FACTURES, STATUT_LABELS, STATUT_VARIANTS, fmt } from '@/lib/mock-data';
+
+const STATUTS = ['Tous', 'PAYE', 'PARTIEL', 'EN_ATTENTE', 'ANNULE'];
+
+export default function FacturesListPage() {
+  const router = useRouter();
+  const [date, setDate] = useState('2026-06-23');
+  const [search, setSearch] = useState('');
+  const [statut, setStatut] = useState('Tous');
+
+  const factures = FACTURES.filter((f) => {
+    const matchDate = f.date === date;
+    const matchSearch = f.patient.toLowerCase().includes(search.toLowerCase()) || f.id.toLowerCase().includes(search.toLowerCase());
+    const matchStatut = statut === 'Tous' || f.statut === statut;
+    return matchDate && matchSearch && matchStatut;
+  });
+
+  const totalFacture = factures.reduce((s, f) => s + f.net, 0);
+  const totalVerse = factures.reduce((s, f) => s + f.verse, 0);
+  const totalAssurance = factures.reduce((s, f) => s + f.assurancePrise, 0);
+  const restant = totalFacture - totalVerse;
+
+  return (
+    <main className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-lg font-bold">Factures</h1>
+        <Link href="/cashier/factures/nouveau">
+          <Button variant="brand" className="gap-2"><Plus className="h-4 w-4" /> Nouvelle facture</Button>
+        </Link>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <KpiCard label="Montant facturé" value={fmt(totalFacture)} tone="primary" hint={`${factures.length} facture(s)`} />
+        <KpiCard label="Encaissé" value={fmt(totalVerse)} tone="success" hint="Versé patient" />
+        <KpiCard label="Restant à payer" value={fmt(restant)} tone="warning" hint="Solde global" />
+      </div>
+
+      <Card className="overflow-hidden">
+        <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input placeholder="Rechercher un patient ou une référence..." className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
+          </div>
+          <Input type="date" className="w-full sm:w-44" value={date} onChange={(e) => setDate(e.target.value)} />
+          <div className="flex flex-wrap gap-1.5">
+            {STATUTS.map((s) => (
+              <button key={s} onClick={() => setStatut(s)} className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ${statut === s ? 'bg-primary text-primary-foreground' : 'border border-border text-muted-foreground hover:bg-muted'}`}>
+                {s === 'Tous' ? 'Tous' : STATUT_LABELS[s as keyof typeof STATUT_LABELS]}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Référence</TableHead>
+              <TableHead>Patient</TableHead>
+              <TableHead>Agent</TableHead>
+              <TableHead className="text-right">Brut</TableHead>
+              <TableHead className="text-right">Assurance</TableHead>
+              <TableHead className="text-right">Net</TableHead>
+              <TableHead className="text-right">Versé</TableHead>
+              <TableHead>Statut</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {factures.map((f) => (
+              <TableRow key={f.id} className="cursor-pointer" onClick={() => router.push(`/cashier/factures/${f.id}`)}>
+                <TableCell className="font-bold text-primary">{f.id}</TableCell>
+                <TableCell className="font-medium">{f.patient}</TableCell>
+                <TableCell className="text-muted-foreground">{f.agent}</TableCell>
+                <TableCell className="text-right">{fmt(f.montantBrut)}</TableCell>
+                <TableCell className="text-right text-emerald-600">{fmt(f.assurancePrise)}</TableCell>
+                <TableCell className="text-right font-semibold">{fmt(f.net)}</TableCell>
+                <TableCell className="text-right">{fmt(f.verse)}</TableCell>
+                <TableCell><Badge variant={STATUT_VARIANTS[f.statut]}>{STATUT_LABELS[f.statut]}</Badge></TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <TableFooter>
+            <TableRow className="hover:bg-transparent">
+              <TableCell colSpan={4} className="text-xs uppercase text-muted-foreground">Totaux</TableCell>
+              <TableCell className="text-right text-emerald-600">{fmt(totalAssurance)}</TableCell>
+              <TableCell className="text-right text-primary">{fmt(totalFacture)}</TableCell>
+              <TableCell className="text-right">{fmt(totalVerse)}</TableCell>
+              <TableCell />
+            </TableRow>
+          </TableFooter>
+        </Table>
+
+        {factures.length === 0 && <p className="p-10 text-center text-sm text-muted-foreground">Aucune facture pour ces critères.</p>}
+      </Card>
+    </main>
+  );
+}

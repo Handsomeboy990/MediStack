@@ -40,3 +40,5 @@ Thumbs.db
 backend/prisma/*.db
 
 CLAUDE.md
+
+redesign/
