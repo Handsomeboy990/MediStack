@@ -1,47 +1,122 @@
-import Link from 'next/link';
+'use client';
 
-// Login screen (placeholder). The authentication logic will be wired to
-// POST /api/v1/auth/login through the centralized HTTP client.
+import { useState } from 'react';
+import { Eye, EyeOff, Stethoscope } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+
 export default function LoginPage() {
+  const [showPwd, setShowPwd] = useState(false);
+
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
-      <h1 className="text-2xl font-bold text-gray-900">Connexion</h1>
-      <p className="mt-2 text-sm text-gray-600">
-        Accédez à votre espace MediTrust.
-      </p>
-
-      <form className="mt-6 space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Email</label>
-          <input
-            type="email"
-            disabled
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
-            placeholder="agent@centre.bj"
-          />
+    <div className="flex min-h-screen">
+      {/* Panneau gauche — identité visuelle */}
+      <div className="relative hidden flex-col justify-between overflow-hidden bg-[#004D40] p-12 lg:flex lg:w-[45%]">
+        {/* Motif décoratif */}
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -left-16 -top-16 h-72 w-72 rounded-full bg-white/5" />
+          <div className="absolute -bottom-24 -right-12 h-96 w-96 rounded-full bg-white/5" />
+          <div className="absolute bottom-48 left-8 h-40 w-40 rounded-full bg-white/5" />
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Mot de passe
-          </label>
-          <input
-            type="password"
-            disabled
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
-          />
-        </div>
-        <button
-          type="button"
-          disabled
-          className="w-full rounded-md bg-marque-accent px-4 py-2 text-white opacity-60"
-        >
-          Se connecter (à venir)
-        </button>
-      </form>
 
-      <Link href="/" className="mt-6 text-sm text-marque-accent">
-        {"Retour à l'accueil"}
-      </Link>
-    </main>
+        {/* Logo */}
+        <div className="relative flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20">
+            <Stethoscope className="h-5 w-5 text-white" />
+          </div>
+          <span className="text-lg font-bold tracking-wide text-white">ClinicFlow</span>
+        </div>
+
+        {/* Accroche centrale */}
+        <div className="relative space-y-6">
+          <div className="h-1 w-12 rounded bg-white/40" />
+          <h1 className="text-4xl font-bold leading-tight text-white">
+            La gestion<br />médicale,<br />simplifiée.
+          </h1>
+          <p className="text-base text-white/70 leading-relaxed max-w-xs">
+            Facturation avec couverture assurance, stock centralisé et traçabilité des paiements pour votre centre de santé.
+          </p>
+        </div>
+
+        {/* Features */}
+        <div className="relative space-y-3">
+          {['Facturation & couverture assurance', 'Gestion du stock en temps réel', 'Supervision multi-rôles'].map((f) => (
+            <div key={f} className="flex items-center gap-3">
+              <div className="h-1.5 w-1.5 shrink-0 rounded-full bg-white/50" />
+              <p className="text-sm text-white/70">{f}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Panneau droit — formulaire */}
+      <div className="flex flex-1 flex-col items-center justify-center bg-white px-8 py-12">
+        <div className="w-full max-w-sm space-y-8">
+
+          {/* Mobile : logo */}
+          <div className="flex items-center gap-3 lg:hidden">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
+              <Stethoscope className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-lg font-bold text-foreground">ClinicFlow</span>
+          </div>
+
+          {/* Titre */}
+          <div>
+            <h2 className="text-2xl font-bold text-foreground">Connexion</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Accédez à votre espace de travail.</p>
+          </div>
+
+          {/* Formulaire */}
+          <form className="space-y-5">
+            <div className="space-y-1.5">
+              <label htmlFor="email" className="text-sm font-medium text-foreground">
+                Adresse email
+              </label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="agent@clinicflow.bj"
+                autoComplete="email"
+                className="h-11"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label htmlFor="password" className="text-sm font-medium text-foreground">
+                Mot de passe
+              </label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPwd ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                  className="h-11 pr-11"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPwd((p) => !p)}
+                  aria-label={showPwd ? 'Masquer' : 'Afficher'}
+                  className="absolute inset-y-0 right-3 flex items-center text-muted-foreground transition hover:text-foreground"
+                >
+                  {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+
+            <Button type="submit" className="h-11 w-full bg-[#004D40] text-white text-sm font-semibold hover:bg-[#003830]">
+              Se connecter
+            </Button>
+          </form>
+
+          <p className="text-center text-xs text-muted-foreground">
+            Vous serez redirigé automatiquement vers votre espace selon votre rôle.
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
+

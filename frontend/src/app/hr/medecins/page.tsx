@@ -1,0 +1,110 @@
+'use client';
+
+import { useState } from 'react';
+import { Pencil, Plus } from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { MEDECINS, SPECIALITES } from '@/lib/mock-data';
+
+export default function MedecinsPage() {
+  const [search, setSearch] = useState('');
+  const filtered = MEDECINS.filter(
+    (m) =>
+      m.nom.toLowerCase().includes(search.toLowerCase()) ||
+      m.prenom.toLowerCase().includes(search.toLowerCase()) ||
+      m.specialite.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  return (
+    <main className="space-y-6">
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-lg font-bold">Liste des médecins</h1>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="gap-2 bg-[#004D40] text-white hover:bg-[#003830]">
+              <Plus className="h-4 w-4" /> Ajouter un médecin
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader><DialogTitle>Ajouter un médecin</DialogTitle></DialogHeader>
+            <div className="space-y-3">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="space-y-1.5"><Label>Nom</Label><Input placeholder="Agossou" /></div>
+                <div className="space-y-1.5"><Label>Prénom</Label><Input placeholder="Christophe" /></div>
+              </div>
+              <div className="space-y-1.5">
+                <Label>Spécialité</Label>
+                <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                  {SPECIALITES.map((s) => <option key={s}>{s}</option>)}
+                </select>
+              </div>
+              <div className="space-y-1.5"><Label>Téléphone</Label><Input placeholder="97 XX XX XX" /></div>
+              <div className="space-y-1.5"><Label>Email</Label><Input type="email" placeholder="medecin@clinicflow.bj" /></div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline">Annuler</Button>
+              <Button className="bg-[#004D40] text-white hover:bg-[#003830]">Enregistrer</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <Input placeholder="Rechercher par nom ou spécialité…" className="max-w-sm" value={search} onChange={(e) => setSearch(e.target.value)} />
+
+      <Card>
+        <CardHeader><CardTitle className="text-base">{filtered.length} médecin(s)</CardTitle></CardHeader>
+        <CardContent className="space-y-2">
+          {filtered.map((m) => (
+            <div key={m.id} className="flex items-center justify-between rounded-xl border border-border p-4">
+              <div>
+                <p className="font-semibold">Dr {m.prenom} {m.nom}</p>
+                <p className="text-xs text-muted-foreground">{m.specialite} · {m.telephone} · {m.email}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant={m.actif ? 'success' : 'secondary'}>{m.actif ? 'Actif' : 'Inactif'}</Badge>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-1"><Pencil className="h-3.5 w-3.5" />Modifier</Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader><DialogTitle>Modifier — Dr {m.prenom} {m.nom}</DialogTitle></DialogHeader>
+                    <div className="space-y-3">
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="space-y-1.5"><Label>Nom</Label><Input defaultValue={m.nom} /></div>
+                        <div className="space-y-1.5"><Label>Prénom</Label><Input defaultValue={m.prenom} /></div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label>Spécialité</Label>
+                        <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" defaultValue={m.specialite}>
+                          {SPECIALITES.map((s) => <option key={s}>{s}</option>)}
+                        </select>
+                      </div>
+                      <div className="space-y-1.5"><Label>Téléphone</Label><Input defaultValue={m.telephone} /></div>
+                      <div className="space-y-1.5"><Label>Email</Label><Input defaultValue={m.email} /></div>
+                      <div className="space-y-1.5">
+                        <Label>Statut</Label>
+                        <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" defaultValue={m.actif ? 'actif' : 'inactif'}>
+                          <option value="actif">Actif</option>
+                          <option value="inactif">Inactif</option>
+                        </select>
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button variant="outline">Annuler</Button>
+                      <Button className="bg-[#004D40] text-white hover:bg-[#003830]">Enregistrer</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+    </main>
+  );
+}
