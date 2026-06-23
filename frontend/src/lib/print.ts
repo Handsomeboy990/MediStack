@@ -97,7 +97,7 @@ export function printFacture(f: PrintableFacture) {
   openDocument(`Facture ${f.id}`, css, body);
 }
 
-export function printTicket(f: PrintableFacture, rendu = 0) {
+export function printTicket(f: PrintableFacture, rendu = 0, monnaieRendue = true) {
   const reste = f.net - f.verse;
   const items = f.lignes
     .map((l) => `<div class="it"><span>${l.libelle} x${l.qte}</span><span>${fmt(l.qte * l.pu)}</span></div>`)
@@ -126,6 +126,7 @@ export function printTicket(f: PrintableFacture, rendu = 0) {
     <div class="tot"><span>Versé</span><span>${fmt(f.verse)}</span></div>
     ${reste > 0 ? `<div class="tot"><span>Reste</span><span>${fmt(reste)}</span></div>` : ''}
     ${rendu > 0 ? `<div class="tot"><span>Rendu</span><span>${fmt(rendu)}</span></div>` : ''}
+    ${rendu > 0 ? `<div class="tot"><span>Monnaie remise</span><span>${monnaieRendue ? 'Oui' : 'Non'}</span></div>` : ''}
     <div class="tot"><span>Mode</span><span>${f.modePaiement ?? '-'}</span></div>
     <hr>
     <div class="t small">Merci de votre visite</div>

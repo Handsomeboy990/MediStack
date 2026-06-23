@@ -31,6 +31,7 @@ export default function NouvelleFacturePage() {
   const [newQte, setNewQte] = useState(1);
   const [mode, setMode] = useState('Espèces');
   const [montantRecu, setMontantRecu] = useState('');
+  const [monnaieRendue, setMonnaieRendue] = useState(true);
 
   const patient = patients.find((p) => p.id === patientId) ?? patients[0];
   const carte = patient?.cartesAssurance.find((c) => c.id === carteId);
@@ -38,7 +39,8 @@ export default function NouvelleFacturePage() {
   const brut = lignes.reduce((s, l) => s + l.qte * l.pu, 0);
   const assurance = Math.round((brut * taux) / 100);
   const net = brut - assurance;
-  const rendu = Math.max(0, Number(montantRecu || 0) - net);
+  const recu = Number(montantRecu) || 0;
+  const rendu = Math.max(0, recu - net);
 
   const patientOptions = patients.map((p) => ({ value: p.id, label: `${p.prenom} ${p.nom}`, hint: p.telephone }));
   const carteOptions = [
@@ -193,9 +195,29 @@ export default function NouvelleFacturePage() {
                 <Label className="text-xs uppercase">Montant reçu</Label>
                 <Input className="no-arrows text-right text-lg font-medium" type="number" value={montantRecu} onChange={(e) => setMontantRecu(e.target.value)} placeholder="0" />
               </div>
-              <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Rendu monnaie</span><strong>{fmt(rendu)}</strong></div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Rendu monnaie</span>
+                <strong className={rendu > 0 ? 'text-primary' : ''}>{fmt(rendu)}</strong>
+              </div>
+              {rendu > 0 && (
+                <div className="flex items-center justify-between rounded-lg border border-border p-2.5 text-sm">
+                  <span className="text-muted-foreground">Monnaie rendue ?</span>
+                  <div className="flex gap-1.5">
+                    {[true, false].map((v) => (
+                      <button
+                        key={String(v)}
+                        type="button"
+                        onClick={() => setMonnaieRendue(v)}
+                        className={`rounded-md border px-3 py-1 text-xs font-semibold transition-colors ${monnaieRendue === v ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground hover:bg-muted'}`}
+                      >
+                        {v ? 'Oui' : 'Non'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
               <Button variant="brand" className="w-full gap-2"><Lock className="h-4 w-4" />Valider et verrouiller</Button>
-              <Button variant="outline" className="w-full gap-2" onClick={() => printTicket(draft, rendu)}><Printer className="h-4 w-4" />Aperçu ticket</Button>
+              <Button variant="outline" className="w-full gap-2" onClick={() => printTicket(draft, rendu, monnaieRendue)}><Printer className="h-4 w-4" />Aperçu ticket</Button>
             </CardContent>
           </Card>
           <div className="flex flex-col gap-2">
