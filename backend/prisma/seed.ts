@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { seedInsuranceOrganisations } from './seeders/insurance-organisations.seeder';
 
 const prisma = new PrismaClient();
 
@@ -64,6 +65,16 @@ const permissions = [
   { name: 'doctor:update', description: 'Update a doctor' },
   { name: 'doctor:disable', description: 'Disable a doctor' },
   { name: 'specialty:read', description: 'Read specialties' },
+  {
+    name: 'insurance:read',
+    description: 'Read insurers and patient memberships',
+  },
+  {
+    name: 'insurance:create',
+    description: 'Attach an insurance membership to a patient',
+  },
+  { name: 'insurance:update', description: 'Update an insurance membership' },
+  { name: 'insurance:delete', description: 'Remove an insurance membership' },
 ];
 
 // Role to permissions mapping. super_admin gets every permission.
@@ -93,6 +104,10 @@ const rolePermissions: Record<string, string[]> = {
     'discount:apply',
     'invoice:cancel_request',
     'revenue:own_read',
+    'insurance:read',
+    'insurance:create',
+    'insurance:update',
+    'insurance:delete',
   ],
   store_keeper: [
     'stock:read',
@@ -163,7 +178,11 @@ async function main() {
     },
   });
 
-  console.log('Roles, permissions, role permissions and admin user seeded.');
+  await seedInsuranceOrganisations(prisma);
+
+  console.log(
+    'Roles, permissions, role permissions, admin user and insurers seeded.',
+  );
 }
 
 main()
