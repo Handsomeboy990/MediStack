@@ -100,7 +100,7 @@ export default function DetailFacturePage({ params }: { params: { id: string } }
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle>Traçabilité</CardTitle></CardHeader>
+              <CardHeader><CardTitle>Historique</CardTitle></CardHeader>
               <CardContent className="space-y-2 text-sm">
                 <div className="flex justify-between"><span className="text-muted-foreground">Agent</span><strong>{f.agent}</strong></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">Mode</span><strong>{f.modePaiement ?? '-'}</strong></div>

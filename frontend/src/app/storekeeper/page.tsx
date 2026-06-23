@@ -10,7 +10,7 @@ const ruptures = STOCK_ARTICLES.filter((a) => a.quantite === 0);
 
 const navCards = [
   { href: '/storekeeper/entree', label: 'Entrée de stock', desc: 'Enregistrer une réception', icon: ArrowDown },
-  { href: '/storekeeper/ajustement', label: 'Ajustement', desc: 'Corriger un écart', icon: RefreshCw },
+  { href: '/storekeeper/ajustement', label: 'Inventaire', desc: 'Corriger un écart', icon: RefreshCw },
   { href: '/storekeeper/transferts', label: 'Transferts', desc: 'Vers la pharmacie', icon: ArrowLeftRight },
   { href: '/storekeeper/alertes', label: 'Alertes', desc: `${alerts.length} article(s) en tension`, icon: AlertTriangle },
 ];

@@ -15,7 +15,7 @@ export default function AjustementPage() {
       <p className="text-sm text-muted-foreground">Corriger un écart suite à un inventaire physique ou une perte.</p>
 
       <Card className="max-w-xl">
-        <CardHeader><CardTitle>Formulaire d&apos;ajustement</CardTitle></CardHeader>
+        <CardHeader><CardTitle>Formulaire d&apos;inventaire</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1.5">
             <Label>Article</Label>
@@ -60,7 +60,7 @@ export default function AjustementPage() {
             <Input type="date" defaultValue="2026-06-23" />
           </div>
 
-          <Button variant="brand" className="w-full ">Valider l&apos;ajustement</Button>
+          <Button variant="brand" className="w-full ">Valider l&apos;inventaire</Button>
         </CardContent>
       </Card>
     </main>

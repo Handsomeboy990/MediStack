@@ -28,7 +28,7 @@ const roles = [
     id: 'R-04',
     nom: 'Agent magasinier',
     description: 'Gestion du stock central, entrées, sorties, transferts et alertes.',
-    permissions: ['État du stock', 'Entrée de stock', 'Ajustement', 'Transferts', 'Alertes rupture'],
+    permissions: ['État du stock', 'Entrée de stock', 'Inventaire', 'Transferts', 'Alertes rupture'],
     utilisateurs: 1,
   },
   {
