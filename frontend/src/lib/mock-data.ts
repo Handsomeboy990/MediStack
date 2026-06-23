@@ -48,7 +48,7 @@ export type Facture = {
   verse: number;
   statut: 'PAYE' | 'PARTIEL' | 'ANNULE' | 'EN_ATTENTE';
   agent: string;
-  modePaiement: 'ESPECES' | 'MOBILE' | 'MIXTE' | null;
+  modePaiement: string | null;
   lignes: LigneFacture[];
 };
 
@@ -193,15 +193,18 @@ const ANIP_DB: AnipRecord[] = [
   { npi: '1987654320', nom: 'Tchégnon', prenom: 'Reine', dateNaissance: '1995-09-23', adresse: 'Porto-Novo, Djassin' },
 ];
 
+// Un NPI valide comporte exactement 10 chiffres.
+export function isNpiValide(npi: string) {
+  return /^\d{10}$/.test(npi.trim());
+}
+
 export function lookupNpi(npi: string): AnipRecord | null {
   const clean = npi.trim();
+  if (!isNpiValide(clean)) return null;
   const found = ANIP_DB.find((r) => r.npi === clean);
   if (found) return found;
-  // Retour générique pour tout NPI plausible, afin que la démo fonctionne.
-  if (clean.length >= 10) {
-    return { npi: clean, nom: 'Aïkpé', prenom: 'Honoré', dateNaissance: '1990-01-01', adresse: 'Cotonou, Bénin' };
-  }
-  return null;
+  // Retour générique pour tout NPI valide, afin que la démo fonctionne.
+  return { npi: clean, nom: 'Aïkpé', prenom: 'Honoré', dateNaissance: '1990-01-01', adresse: 'Cotonou, Bénin' };
 }
 
 // ─── Utilisateurs ────────────────────────────────────────────

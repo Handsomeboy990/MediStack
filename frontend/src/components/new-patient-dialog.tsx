@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { InsuranceCardsField } from '@/components/insurance-cards-field';
-import { lookupNpi, type CarteAssurance } from '@/lib/mock-data';
+import { isNpiValide, lookupNpi, type CarteAssurance } from '@/lib/mock-data';
 import { addPatient, nextPatientId } from '@/lib/patients-store';
 
 const ANNEE_COURANTE = new Date().getFullYear();
@@ -29,6 +29,7 @@ export function NewPatientDialog({ trigger, onCreated }: Props) {
   const idLocked = beninois; // Nom, prénom et date de naissance proviennent de l'ANIP.
 
   const recupererNpi = () => {
+    if (!isNpiValide(npi)) { setNpiError('Entrez un NPI valide (exactement 10 chiffres).'); return; }
     const rec = lookupNpi(npi);
     if (!rec) { setNpiError('NPI introuvable dans la base ANIP.'); return; }
     setNpiError('');
@@ -79,7 +80,7 @@ export function NewPatientDialog({ trigger, onCreated }: Props) {
             <div className="space-y-1.5">
               <Label>NPI</Label>
               <div className="flex gap-2">
-                <Input placeholder="Numéro Personnel d'Identification" value={npi} onChange={(e) => setNpi(e.target.value)} />
+                <Input placeholder="10 chiffres" inputMode="numeric" maxLength={10} value={npi} onChange={(e) => setNpi(e.target.value.replace(/\D/g, '').slice(0, 10))} />
                 <Button type="button" variant="outline" className="gap-1 shrink-0" onClick={recupererNpi}><Search className="h-4 w-4" />Récupérer</Button>
               </div>
               {npiError && <p className="text-xs text-destructive">{npiError}</p>}
