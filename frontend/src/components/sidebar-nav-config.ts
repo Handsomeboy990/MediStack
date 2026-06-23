@@ -36,8 +36,9 @@ export const roleNavConfig: Record<string, RoleConfig> = {
     items: [
       { href: '/storekeeper', label: 'Tableau de bord', icon: LayoutDashboard },
       { href: '/storekeeper/entree', label: 'Entrée stock', icon: ArrowDown },
+      { href: '/storekeeper/transferts', label: 'Sorties / Transferts', icon: ArrowLeftRight },
       { href: '/storekeeper/ajustement', label: 'Inventaire', icon: RefreshCw },
-      { href: '/storekeeper/transferts', label: 'Transferts', icon: ArrowLeftRight },
+      { href: '/storekeeper/mouvements', label: 'Mouvements', icon: ClipboardList },
       { href: '/storekeeper/alertes', label: 'Alertes rupture', icon: AlertTriangle },
     ],
   },

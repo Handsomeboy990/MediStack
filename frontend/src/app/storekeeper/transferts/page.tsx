@@ -33,7 +33,7 @@ export default function TransfertsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {STOCK_ARTICLES.map((a) => (
-                      <SelectItem key={a.id} value={a.id}>{a.libelle} – {a.quantite} disponible(s)</SelectItem>
+                      <SelectItem key={a.id} value={a.id}>{a.libelle} · {a.quantite} disponible(s)</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

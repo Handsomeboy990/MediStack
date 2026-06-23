@@ -7,7 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { STOCK_ARTICLES } from '@/lib/mock-data';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { STOCK_ARTICLES, MOUVEMENTS_STOCK } from '@/lib/mock-data';
+
+const entrees = MOUVEMENTS_STOCK.filter((m) => m.type === 'ENTREE');
 
 export default function EntreeStockPage() {
   const [article, setArticle] = useState('');
@@ -45,7 +48,7 @@ export default function EntreeStockPage() {
                 </div>
                 <div className="space-y-1.5">
                   <Label>Quantité reçue</Label>
-                  <Input type="number" min={1} placeholder="0" value={qte} onChange={(e) => setQte(e.target.value)} />
+                  <Input type="number" min={1} placeholder="0" className="no-arrows" value={qte} onChange={(e) => setQte(e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
                   <Label>Fournisseur / Motif</Label>
@@ -80,12 +83,42 @@ export default function EntreeStockPage() {
                   <p className="font-medium">{a.libelle}</p>
                   <p className="text-xs text-muted-foreground">Seuil : {a.seuil} · Actuel : {a.quantite}</p>
                 </div>
-                <span className="font-semibold text-amber-600">+{a.seuil * 2 - a.quantite} suggéré</span>
+                <span className="font-semibold text-primary">+{a.seuil * 2 - a.quantite} suggéré</span>
               </div>
             ))}
           </CardContent>
         </Card>
       </div>
+
+      <Card className="overflow-hidden">
+        <CardHeader><CardTitle className="text-sm">Dernières entrées</CardTitle></CardHeader>
+        {entrees.length === 0 ? (
+          <p className="p-10 text-center text-sm text-muted-foreground">Aucune entrée enregistrée.</p>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Date</TableHead>
+                <TableHead>Article</TableHead>
+                <TableHead className="text-right">Quantité</TableHead>
+                <TableHead>Agent</TableHead>
+                <TableHead>Motif</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {entrees.map((m) => (
+                <TableRow key={m.id}>
+                  <TableCell className="text-muted-foreground">{m.date}</TableCell>
+                  <TableCell className="font-medium">{m.article}</TableCell>
+                  <TableCell className="text-right font-bold">+{m.quantite}</TableCell>
+                  <TableCell className="text-muted-foreground">{m.agent}</TableCell>
+                  <TableCell className="text-muted-foreground">{m.motif}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </Card>
     </main>
   );
 }

@@ -132,3 +132,46 @@ export function printTicket(f: PrintableFacture, rendu = 0) {
   `;
   openDocument(`Ticket ${f.id}`, css, body);
 }
+
+export type CommandeLigne = { code: string; libelle: string; unite: string; qte: number; pu: number };
+
+export function printBonCommande(lignes: CommandeLigne[]) {
+  const total = lignes.reduce((s, l) => s + l.qte * l.pu, 0);
+  const rows = lignes
+    .map(
+      (l) => `<tr>
+        <td>${l.code}</td>
+        <td>${l.libelle}</td>
+        <td class="r">${l.qte} ${l.unite}</td>
+        <td class="r">${fmt(l.pu)}</td>
+        <td class="r b">${fmt(l.qte * l.pu)}</td>
+      </tr>`,
+    )
+    .join('');
+  const css = `
+    .head { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid ${VERT}; padding-bottom: 16px; }
+    .head h1 { color: ${VERT}; margin: 0; font-size: 24px; }
+    .head p { margin: 2px 0; font-size: 12px; color: #555; }
+    .meta { text-align: right; }
+    .meta h2 { margin: 0; letter-spacing: 2px; color: ${VERT}; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
+    th { background: ${VERT}; color: #fff; text-align: left; padding: 8px 10px; font-size: 11px; text-transform: uppercase; }
+    td { padding: 8px 10px; border-bottom: 1px solid #eee; }
+    .r { text-align: right; } .b { font-weight: bold; }
+    tfoot td { border-top: 2px solid ${VERT}; font-weight: bold; color: ${VERT}; }
+    footer { margin-top: 48px; display: flex; justify-content: space-between; font-size: 12px; color: #555; }
+  `;
+  const body = `
+    <div class="head">
+      <div><h1>MediTrace</h1><p>Magasin central · Cotonou, Bénin</p></div>
+      <div class="meta"><h2>BON DE COMMANDE</h2><p>${new Date().toLocaleDateString('fr-FR')}</p></div>
+    </div>
+    <table>
+      <thead><tr><th>Code</th><th>Désignation</th><th class="r">Quantité</th><th class="r">PU</th><th class="r">Total</th></tr></thead>
+      <tbody>${rows}</tbody>
+      <tfoot><tr><td colspan="4" class="r">Total estimé</td><td class="r">${fmt(total)}</td></tr></tfoot>
+    </table>
+    <footer><div>Établi par : ____________________</div><div>Visa responsable : ____________________</div></footer>
+  `;
+  openDocument('Bon de commande', css, body);
+}
