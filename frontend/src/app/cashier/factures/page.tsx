@@ -11,7 +11,8 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { KpiCard } from '@/components/kpi-card';
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { FACTURES, STATUT_LABELS, STATUT_VARIANTS, fmt } from '@/lib/mock-data';
+import { STATUT_LABELS, STATUT_VARIANTS, fmt } from '@/lib/mock-data';
+import { useFactures } from '@/lib/factures-store';
 
 const STATUTS = ['Tous', 'PAYE', 'PARTIEL', 'EN_ATTENTE', 'ANNULE'];
 
@@ -21,8 +22,9 @@ export default function FacturesListPage() {
   const [dateFin, setDateFin] = useState('');
   const [search, setSearch] = useState('');
   const [statut, setStatut] = useState('Tous');
+  const all = useFactures();
 
-  const factures = FACTURES.filter((f) => {
+  const factures = all.filter((f) => {
     const matchDate = (!dateDebut || f.date >= dateDebut) && (!dateFin || f.date <= dateFin);
     const matchSearch = f.patient.toLowerCase().includes(search.toLowerCase()) || f.id.toLowerCase().includes(search.toLowerCase());
     const matchStatut = statut === 'Tous' || f.statut === statut;
