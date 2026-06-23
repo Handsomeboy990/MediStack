@@ -28,7 +28,7 @@ export default function ProfilPage() {
     <main className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-[#004D40] text-2xl font-bold text-white">
+          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary text-2xl font-bold text-primary-foreground">
             {user.prenom[0]}{user.nom[0]}
           </div>
           <h1 className="text-2xl font-bold">{user.prenom} {user.nom}</h1>

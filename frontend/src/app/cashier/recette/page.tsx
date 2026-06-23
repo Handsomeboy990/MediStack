@@ -36,7 +36,7 @@ export default function RecettePage() {
                 <strong className="text-primary">{fmt(r.val)}</strong>
               </div>
               <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                <div className="h-2 rounded-full bg-[#004D40]" style={{ width: encaisse > 0 ? `${Math.round((r.val / encaisse) * 100)}%` : '0%' }} />
+                <div className="h-2 rounded-full bg-primary" style={{ width: encaisse > 0 ? `${Math.round((r.val / encaisse) * 100)}%` : '0%' }} />
               </div>
             </div>
           ))}

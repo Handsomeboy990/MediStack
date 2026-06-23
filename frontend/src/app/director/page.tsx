@@ -76,7 +76,7 @@ export default function DirectorPage() {
                   <strong className="text-primary">{fmt(val)} ({pct}%)</strong>
                 </div>
                 <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                  <div className="h-2 rounded-full bg-[#004D40]" style={{ width: `${pct}%` }} />
+                  <div className="h-2 rounded-full bg-primary" style={{ width: `${pct}%` }} />
                 </div>
               </div>
             );

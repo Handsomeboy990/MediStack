@@ -1,15 +1,9 @@
 import type { Metadata } from 'next';
-import { Montserrat } from 'next/font/google';
 import { AppShell } from '@/components/app-sidebar';
 import './globals.css';
 
-const montserrat = Montserrat({
-  subsets: ['latin'],
-  variable: '--font-montserrat',
-});
-
 export const metadata: Metadata = {
-  title: 'MediTrust',
+  title: 'MediTrace',
   description: 'Gestion de caisse, de facturation et de stock pour les centres de santé',
 };
 
@@ -19,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" className={montserrat.variable}>
-      <body className="bg-background text-foreground">
+    <html lang="fr">
+      <body className="min-h-screen bg-background text-foreground antialiased">
         <AppShell>{children}</AppShell>
       </body>
     </html>

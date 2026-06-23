@@ -56,7 +56,7 @@ export default function StatsPage() {
                     <div key={m.mois} className="mb-2 flex items-center gap-3 text-sm">
                       <span className="w-10 text-muted-foreground">{m.mois}</span>
                       <div className="flex-1 overflow-hidden rounded-full bg-muted h-2">
-                        <div className="h-2 rounded-full bg-[#004D40]" style={{ width: `${pct}%` }} />
+                        <div className="h-2 rounded-full bg-primary" style={{ width: `${pct}%` }} />
                       </div>
                       <span className="w-28 text-right font-medium">{fmt(m.val)}</span>
                     </div>
@@ -79,7 +79,7 @@ export default function StatsPage() {
                       <span>{spec}</span><strong className="text-primary">{fmt(val)} ({pct}%)</strong>
                     </div>
                     <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                      <div className="h-2 rounded-full bg-[#004D40]" style={{ width: `${pct}%` }} />
+                      <div className="h-2 rounded-full bg-primary" style={{ width: `${pct}%` }} />
                     </div>
                   </div>
                 );

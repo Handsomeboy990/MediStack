@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Eye, EyeOff, Stethoscope } from 'lucide-react';
+import Image from 'next/image';
+import { Eye, EyeOff } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,7 +13,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen">
       {/* Panneau gauche - identité visuelle */}
-      <div className="relative hidden flex-col justify-between overflow-hidden bg-[#004D40] p-12 lg:flex lg:w-[45%]">
+      <div className="relative hidden flex-col justify-between overflow-hidden bg-primary p-12 lg:flex lg:w-[45%]">
         {/* Motif décoratif */}
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute -left-16 -top-16 h-72 w-72 rounded-full bg-white/5" />
@@ -22,10 +23,16 @@ export default function LoginPage() {
 
         {/* Logo */}
         <div className="relative flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20">
-            <Stethoscope className="h-5 w-5 text-white" />
+          <div className="flex h-12 w-44 items-center justify-center overflow-hidden rounded-2xl bg-white/20 px-3">
+            <Image
+              src="/logo.png"
+              alt="MediTrace"
+              width={220}
+              height={72}
+              className="h-8 w-auto object-contain"
+              priority
+            />
           </div>
-          <span className="text-lg font-bold tracking-wide text-white">ClinicFlow</span>
         </div>
 
         {/* Accroche centrale */}
@@ -56,10 +63,16 @@ export default function LoginPage() {
 
           {/* Mobile : logo */}
           <div className="flex items-center gap-3 lg:hidden">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
-              <Stethoscope className="h-5 w-5 text-white" />
+            <div className="flex h-10 w-36 items-center justify-center overflow-hidden rounded-2xl bg-primary px-2">
+              <Image
+                src="/logo.png"
+                alt="MediTrace"
+                width={220}
+                height={72}
+                className="h-7 w-auto object-contain"
+                priority
+              />
             </div>
-            <span className="text-lg font-bold text-foreground">ClinicFlow</span>
           </div>
 
           {/* Titre */}
@@ -106,7 +119,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <Button type="submit" className="h-11 w-full bg-[#004D40] text-white text-sm font-semibold hover:bg-[#003830]">
+            <Button type="submit" className="h-11 w-full bg-primary text-white text-sm font-semibold hover:bg-primary/90">
               Se connecter
             </Button>
           </form>

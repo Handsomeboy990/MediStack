@@ -10,29 +10,29 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-montserrat)', 'Montserrat', 'sans-serif'],
+        sans: ['Montserrat', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
-        ring: '#004D40',
+        ring: '#55bab3',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: '#004D40',
+          DEFAULT: '#55bab3',
           foreground: '#ffffff',
         },
         secondary: {
-          DEFAULT: '#e6f2f0',
-          foreground: '#003830',
+          DEFAULT: '#e6f7f6',
+          foreground: '#245f5a',
         },
         muted: {
-          DEFAULT: '#f2f7f6',
+          DEFAULT: '#f2fbfa',
           foreground: 'hsl(215.4 16.3% 46.9%)',
         },
         accent: {
-          DEFAULT: '#d0e9e5',
-          foreground: '#003830',
+          DEFAULT: '#d0efec',
+          foreground: '#245f5a',
         },
         destructive: {
           DEFAULT: 'hsl(0 84.2% 60.2%)',
@@ -47,14 +47,14 @@ const config: Config = {
           foreground: 'hsl(222.2 84% 4.9%)',
         },
         sidebar: {
-          DEFAULT: '#004D40',
+          DEFAULT: '#55bab3',
           foreground: '#f0faf8',
-          primary: '#006B5A',
+          primary: '#46a8a1',
           'primary-foreground': '#ffffff',
-          accent: '#005f4e',
+          accent: '#3e9b94',
           'accent-foreground': '#ffffff',
-          border: '#00382e',
-          ring: '#33b59a',
+          border: '#3f8f89',
+          ring: '#55bab3',
         },
         marque: {
           jaune: '#ffcc00',

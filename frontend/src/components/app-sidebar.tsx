@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Bell, LogOut, Stethoscope } from 'lucide-react';
+import { Bell, LogOut } from 'lucide-react';
 
 import {
   Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent,
@@ -18,15 +19,22 @@ function AppSidebar() {
   const config = currentRole ? roleNavConfig[currentRole] : null;
 
   return (
-    <Sidebar collapsible="icon" className="bg-[#004D40] text-white">
+    <Sidebar collapsible="icon" className="bg-primary text-primary-foreground">
       <SidebarHeader className="border-b border-white/10 pb-4">
         <div className="flex items-center gap-3 px-1 pt-1">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/15">
-            <Stethoscope className="h-5 w-5 text-white" />
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white/15">
+            <Image
+              src="/logo-icone.png"
+              alt="MediTrace"
+              width={36}
+              height={36}
+              className="h-full w-full object-contain"
+              priority
+            />
           </div>
           <div className="group-data-[state=collapsed]/sidebar:hidden overflow-hidden">
-            <p className="truncate text-sm font-bold text-white">ClinicFlow</p>
-            <p className="truncate text-xs text-white/60">{config?.label ?? 'Gestion clinique'}</p>
+            <p className="truncate text-sm font-bold text-primary-foreground">MediTrace</p>
+            <p className="truncate text-xs text-primary-foreground/60">{config?.label ?? 'Gestion clinique'}</p>
           </div>
         </div>
       </SidebarHeader>
@@ -88,14 +96,14 @@ function AppSidebar() {
             U
           </div>
           <div className="group-data-[state=collapsed]/sidebar:hidden min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-white">Utilisateur</p>
-            <p className="truncate text-xs text-white/60">Connecté</p>
+            <p className="truncate text-sm font-medium text-primary-foreground">Utilisateur</p>
+            <p className="truncate text-xs text-primary-foreground/60">Connecté</p>
           </div>
           <div className="group-data-[state=collapsed]/sidebar:hidden flex gap-1">
-            <Link href="/notifications" className="rounded-md p-1.5 text-white/60 hover:bg-white/10 hover:text-white">
+            <Link href="/notifications" className="rounded-md p-1.5 text-primary-foreground/60 hover:bg-white/10 hover:text-primary-foreground">
               <Bell className="h-3.5 w-3.5" />
             </Link>
-            <Link href="/login" className="rounded-md p-1.5 text-white/60 hover:bg-white/10 hover:text-white">
+            <Link href="/login" className="rounded-md p-1.5 text-primary-foreground/60 hover:bg-white/10 hover:text-primary-foreground">
               <LogOut className="h-3.5 w-3.5" />
             </Link>
           </div>
@@ -117,7 +125,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
   const currentItem = config?.items.find((item) =>
     item.href === currentRole ? pathname === item.href : pathname.startsWith(item.href),
   );
-  const pageTitle = currentItem?.label ?? config?.label ?? 'ClinicFlow';
+  const pageTitle = currentItem?.label ?? config?.label ?? 'MediTrace';
 
   return (
     <SidebarProvider>
