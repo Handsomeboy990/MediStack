@@ -1,23 +1,38 @@
 import Link from 'next/link';
-import { BarChart3, Shield, TrendingUp, Users } from 'lucide-react';
+import { BarChart3, Shield, Users, Warehouse } from 'lucide-react';
 
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { KpiCard } from '@/components/kpi-card';
+import { Donut, LineChart } from '@/components/charts';
 import { FACTURES, UTILISATEURS, STOCK_ARTICLES, fmt } from '@/lib/mock-data';
 
-const revenue = FACTURES.filter((f) => f.statut === 'PAYE').reduce((s, f) => s + f.net, 0);
+const payees = FACTURES.filter((f) => f.statut === 'PAYE');
+const revenue = payees.reduce((s, f) => s + f.net, 0);
 const alerts = STOCK_ARTICLES.filter((a) => a.quantite <= a.seuil).length;
 
 const kpis = [
-  { label: 'Chiffre d\'affaires', value: fmt(revenue), tone: 'text-primary' },
-  { label: 'Utilisateurs actifs', value: String(UTILISATEURS.filter((u) => u.actif).length), tone: 'text-emerald-600' },
-  { label: 'Factures totales', value: String(FACTURES.length), tone: 'text-foreground' },
-  { label: 'Alertes stock', value: String(alerts), tone: alerts > 0 ? 'text-amber-600' : 'text-foreground' },
+  { label: 'Chiffre d’affaires', value: fmt(revenue), tone: 'primary' as const, hint: 'Factures payées' },
+  { label: 'Utilisateurs actifs', value: String(UTILISATEURS.filter((u) => u.actif).length), tone: 'success' as const, hint: 'Comptes actifs' },
+  { label: 'Factures totales', value: String(FACTURES.length), tone: 'neutral' as const, hint: 'Toutes périodes' },
+  { label: 'Alertes stock', value: String(alerts), tone: alerts > 0 ? ('warning' as const) : ('neutral' as const), hint: 'Articles en tension' },
+];
+
+const MODE_LABELS: Record<string, string> = { ESPECES: 'Espèces', MOBILE: 'Mobile money', MIXTE: 'Mixte' };
+const parMode = ['ESPECES', 'MOBILE', 'MIXTE'].map((m) => ({
+  label: MODE_LABELS[m],
+  value: payees.filter((f) => f.modePaiement === m).reduce((s, f) => s + f.net, 0),
+}));
+
+const evolution = [
+  { label: 'Jan', value: 3200000 }, { label: 'Fév', value: 3800000 }, { label: 'Mar', value: 4100000 },
+  { label: 'Avr', value: 3600000 }, { label: 'Mai', value: 4500000 }, { label: 'Juin', value: revenue },
 ];
 
 const navCards = [
   { href: '/director/stats', label: 'Statistiques', desc: 'Revenus, médecins, évolution', icon: BarChart3 },
   { href: '/director/utilisateurs', label: 'Utilisateurs', desc: 'Gestion complète des comptes', icon: Users },
   { href: '/director/roles', label: 'Rôles', desc: 'Attribution et permissions', icon: Shield },
+  { href: '/director/magasins', label: 'Magasins', desc: 'Magasins et pharmacies', icon: Warehouse },
 ];
 
 export default function DirectorPage() {
@@ -29,17 +44,21 @@ export default function DirectorPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {kpis.map((k) => (
-          <Card key={k.label}>
-            <CardContent className="p-5">
-              <p className="text-xs text-muted-foreground">{k.label}</p>
-              <p className={`mt-1 text-2xl font-bold ${k.tone}`}>{k.value}</p>
-            </CardContent>
-          </Card>
-        ))}
+        {kpis.map((k) => <KpiCard key={k.label} label={k.label} value={k.value} tone={k.tone} hint={k.hint} />)}
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-4 xl:grid-cols-3">
+        <Card className="xl:col-span-2">
+          <CardHeader><CardTitle className="text-sm">Évolution des revenus (6 mois)</CardTitle></CardHeader>
+          <CardContent><LineChart data={evolution} /></CardContent>
+        </Card>
+        <Card>
+          <CardHeader><CardTitle className="text-sm">Modes de paiement</CardTitle></CardHeader>
+          <CardContent><Donut data={parMode} format={fmt} /></CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {navCards.map((c) => {
           const Icon = c.icon;
           return (
@@ -59,30 +78,6 @@ export default function DirectorPage() {
           );
         })}
       </div>
-
-      <Card>
-        <CardContent className="p-5">
-          <div className="mb-4 flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            <p className="font-semibold">Répartition des revenus par mode de paiement</p>
-          </div>
-          {(['ESPECES', 'MOBILE', 'MIXTE'] as const).map((mode) => {
-            const val = FACTURES.filter((f) => f.statut === 'PAYE' && f.modePaiement === mode).reduce((s, f) => s + f.net, 0);
-            const pct = revenue > 0 ? Math.round((val / revenue) * 100) : 0;
-            return (
-              <div key={mode} className="mb-3 space-y-1">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{mode}</span>
-                  <strong className="text-primary">{fmt(val)} ({pct}%)</strong>
-                </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                  <div className="h-2 rounded-full bg-primary" style={{ width: `${pct}%` }} />
-                </div>
-              </div>
-            );
-          })}
-        </CardContent>
-      </Card>
     </main>
   );
 }
