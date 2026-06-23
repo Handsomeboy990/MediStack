@@ -3,11 +3,8 @@ import { ClipboardList, FileText, Receipt, TrendingUp, Users } from 'lucide-reac
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { KpiCard } from '@/components/kpi-card';
 import { FACTURES, STATUT_LABELS, STATUT_VARIANTS, fmt } from '@/lib/mock-data';
 
 const today = '2026-06-23';
@@ -17,10 +14,10 @@ const enAttente = todayFacs.filter((f) => f.statut === 'EN_ATTENTE').length;
 const partiels = todayFacs.filter((f) => f.statut === 'PARTIEL').length;
 
 const kpis = [
-  { label: 'Factures du jour', value: String(todayFacs.length), tone: 'text-primary' },
-  { label: 'Encaissé', value: fmt(totalJour), tone: 'text-primary' },
-  { label: 'En attente', value: String(enAttente), tone: 'text-amber-600' },
-  { label: 'Partielles', value: String(partiels), tone: 'text-orange-500' },
+  { label: 'Factures du jour', value: String(todayFacs.length), tone: 'primary' as const, hint: 'Toutes statuts' },
+  { label: 'Encaissé', value: fmt(totalJour), tone: 'success' as const, hint: 'Net patient payé' },
+  { label: 'En attente', value: String(enAttente), tone: 'warning' as const, hint: 'À encaisser' },
+  { label: 'Partielles', value: String(partiels), tone: 'danger' as const, hint: 'Solde restant' },
 ];
 
 const quickLinks = [
@@ -33,19 +30,20 @@ const quickLinks = [
 export default function CashierPage() {
   return (
     <main className="space-y-6">
-      <div>
-        <h1 className="text-xl font-bold text-foreground">Bonjour, Ahouansou B.</h1>
-        <p className="text-sm text-muted-foreground">Lundi 23 juin 2026 · Caisse ouverte</p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-bold text-foreground">Bonjour, Ahouansou B.</h1>
+          <p className="text-sm text-muted-foreground">Lundi 23 juin 2026 · Caisse ouverte</p>
+        </div>
+        <div className="flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-1.5">
+          <span className="h-2 w-2 rounded-full bg-primary" />
+          <span className="text-xs font-medium text-primary">Système en ligne</span>
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {kpis.map((k) => (
-          <Card key={k.label}>
-            <CardContent className="p-5">
-              <p className="text-xs text-muted-foreground">{k.label}</p>
-              <p className={`mt-1 text-2xl font-bold ${k.tone}`}>{k.value}</p>
-            </CardContent>
-          </Card>
+          <KpiCard key={k.label} label={k.label} value={k.value} tone={k.tone} hint={k.hint} />
         ))}
       </div>
 
