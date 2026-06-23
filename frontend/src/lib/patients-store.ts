@@ -36,6 +36,11 @@ export function addCarteAssurance(patientId: string, carte: CarteAssurance) {
   emit();
 }
 
+export function updatePatient(id: string, patch: Partial<Patient>) {
+  patients = patients.map((p) => (p.id === id ? { ...p, ...patch } : p));
+  emit();
+}
+
 export function nextPatientId() {
   return `PAT-${String(patients.length + 1).padStart(3, '0')}`;
 }
