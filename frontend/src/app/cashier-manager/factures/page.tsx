@@ -18,12 +18,13 @@ export default function FacturesManagerPage() {
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [statut, setStatut] = useState('Tous');
-  const [date, setDate] = useState('');
+  const [dateDebut, setDateDebut] = useState('');
+  const [dateFin, setDateFin] = useState('');
 
   const filtered = FACTURES.filter((f) => {
     const matchSearch = f.patient.toLowerCase().includes(search.toLowerCase()) || f.id.toLowerCase().includes(search.toLowerCase());
     const matchStatut = statut === 'Tous' || f.statut === statut;
-    const matchDate = !date || f.date === date;
+    const matchDate = (!dateDebut || f.date >= dateDebut) && (!dateFin || f.date <= dateFin);
     return matchSearch && matchStatut && matchDate;
   });
 
@@ -47,7 +48,12 @@ export default function FacturesManagerPage() {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input placeholder="Rechercher un patient ou une référence..." className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
           </div>
-          <Input type="date" className="w-full sm:w-44" value={date} onChange={(e) => setDate(e.target.value)} />
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-muted-foreground">Du</span>
+            <Input type="date" className="w-36" value={dateDebut} onChange={(e) => setDateDebut(e.target.value)} />
+            <span className="text-xs text-muted-foreground">au</span>
+            <Input type="date" className="w-36" value={dateFin} onChange={(e) => setDateFin(e.target.value)} />
+          </div>
           <div className="flex flex-wrap gap-1.5">
             {STATUTS.map((s) => (
               <button key={s} onClick={() => setStatut(s)} className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ${statut === s ? 'bg-primary text-primary-foreground' : 'border border-border text-muted-foreground hover:bg-muted'}`}>
