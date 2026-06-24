@@ -1,41 +1,43 @@
+'use client';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { KpiCard } from '@/components/kpi-card';
 import { Donut, HBars, LineChart } from '@/components/charts';
-import { FACTURES, MEDECINS, PRESTATIONS, fmt } from '@/lib/mock-data';
-
-const payees = FACTURES.filter((f) => f.statut === 'PAYE');
-const revenue = payees.reduce((s, f) => s + f.net, 0);
-
-const evolution = [
-  { label: 'Jan', value: 3200000 }, { label: 'Fév', value: 3800000 }, { label: 'Mar', value: 4100000 },
-  { label: 'Avr', value: 3600000 }, { label: 'Mai', value: 4500000 }, { label: 'Juin', value: revenue },
-];
+import { MEDECINS, PRESTATIONS, fmt } from '@/lib/mock-data';
+import { useFactures } from '@/lib/factures-store';
 
 const MODE_LABELS: Record<string, string> = { ESPECES: 'Espèces', MOBILE: 'Mobile money', MIXTE: 'Mixte' };
-const parMode = ['ESPECES', 'MOBILE', 'MIXTE'].map((m) => ({
-  label: MODE_LABELS[m],
-  value: payees.filter((f) => f.modePaiement === m).reduce((s, f) => s + f.net, 0),
-}));
-
-// Revenu par spécialité, calculé sur le montant brut des lignes (numérateur et
-// échelle cohérents, contrairement à la version précédente brut/net mélangés).
-const specMap: Record<string, number> = {};
-payees.forEach((f) => {
-  f.lignes.forEach((l) => {
-    const presta = PRESTATIONS.find((p) => p.libelle === l.libelle);
-    const spec = presta?.specialite ?? 'Autre';
-    specMap[spec] = (specMap[spec] ?? 0) + l.qte * l.pu;
-  });
-});
-const bySpec = Object.entries(specMap).map(([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value);
-
 const actifs = MEDECINS.filter((m) => m.actif);
 const specCount: Record<string, number> = {};
 actifs.forEach((m) => { specCount[m.specialite] = (specCount[m.specialite] ?? 0) + 1; });
 const medParSpec = Object.entries(specCount).map(([label, value]) => ({ label, value }));
 
 export default function StatsPage() {
+  const factures = useFactures();
+  const payees = factures.filter((f) => f.statut === 'PAYE');
+  const revenue = payees.reduce((s, f) => s + f.net, 0);
+
+  const evolution = [
+    { label: 'Jan', value: Math.round(revenue * 0.68) }, { label: 'Fév', value: Math.round(revenue * 0.75) }, { label: 'Mar', value: Math.round(revenue * 0.81) },
+    { label: 'Avr', value: Math.round(revenue * 0.78) }, { label: 'Mai', value: Math.round(revenue * 0.91) }, { label: 'Juin', value: revenue },
+  ];
+
+  const parMode = ['ESPECES', 'MOBILE', 'MIXTE'].map((m) => ({
+    label: MODE_LABELS[m],
+    value: payees.filter((f) => f.modePaiement === m).reduce((s, f) => s + f.net, 0),
+  }));
+
+  const specMap: Record<string, number> = {};
+  payees.forEach((f) => {
+    f.lignes.forEach((l) => {
+      const presta = PRESTATIONS.find((p) => p.libelle === l.libelle);
+      const spec = presta?.specialite ?? 'Autre';
+      specMap[spec] = (specMap[spec] ?? 0) + l.qte * l.pu;
+    });
+  });
+  const bySpec = Object.entries(specMap).map(([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value);
+
   return (
     <main className="space-y-4">
       <h1 className="text-lg font-bold">Statistiques</h1>
@@ -51,8 +53,8 @@ export default function StatsPage() {
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <KpiCard label="Chiffre d’affaires" value={fmt(revenue)} tone="primary" hint="Factures payées" />
             <KpiCard label="Factures payées" value={String(payees.length)} tone="success" />
-            <KpiCard label="Partielles" value={String(FACTURES.filter((f) => f.statut === 'PARTIEL').length)} tone="warning" />
-            <KpiCard label="Annulées" value={String(FACTURES.filter((f) => f.statut === 'ANNULE').length)} tone="danger" />
+            <KpiCard label="Partielles" value={String(factures.filter((f) => f.statut === 'PARTIEL').length)} tone="warning" />
+            <KpiCard label="Annulées" value={String(factures.filter((f) => f.statut === 'ANNULE').length)} tone="danger" />
           </div>
           <div className="grid gap-4 xl:grid-cols-3">
             <Card className="xl:col-span-2">

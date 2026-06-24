@@ -1,6 +1,6 @@
 import {
   AlertTriangle, ArrowDown, ArrowLeftRight, BarChart3, BookOpen,
-  ClipboardList, LayoutDashboard, Receipt, RefreshCw, Shield,
+  ClipboardList, FileText, LayoutDashboard, Receipt, RefreshCw, Shield,
   Stethoscope, TrendingUp, Users, Warehouse,
 } from 'lucide-react';
 
@@ -8,6 +8,14 @@ export type NavItem = { href: string; label: string; icon: React.ElementType };
 export type RoleConfig = { label: string; icon: React.ElementType; items: NavItem[] };
 
 export const roleNavConfig: Record<string, RoleConfig> = {
+  '/doctor': {
+    label: 'Médecin',
+    icon: Stethoscope,
+    items: [
+      { href: '/doctor', label: 'Tableau de bord', icon: LayoutDashboard },
+      { href: '/doctor/prescriptions', label: 'Prescription médicale', icon: FileText },
+    ],
+  },
   '/cashier-manager': {
     label: 'Resp. de caisse',
     icon: LayoutDashboard,
@@ -62,16 +70,11 @@ export const roleNavConfig: Record<string, RoleConfig> = {
       { href: '/director/roles', label: 'Rôles', icon: Shield },
       { href: '/director/magasins', label: 'Magasins / Pharmacies', icon: Warehouse },
       { href: '/director/logs', label: 'Journal', icon: ClipboardList },
-      // L'administrateur accède à tous les espaces de l'application.
-      { href: '/cashier-manager', label: 'Espace caisse (resp.)', icon: TrendingUp },
-      { href: '/cashier', label: 'Espace caisse (agent)', icon: Receipt },
-      { href: '/storekeeper', label: 'Espace magasin', icon: Warehouse },
-      { href: '/hr', label: 'Espace RH', icon: Stethoscope },
     ],
   },
 };
 
-export const roleOrder = ['/cashier-manager', '/cashier', '/storekeeper', '/hr', '/director'];
+export const roleOrder = ['/doctor', '/cashier-manager', '/cashier', '/storekeeper', '/hr', '/director'];
 
 export function getCurrentRole(pathname: string) {
   return roleOrder.find((r) => pathname.startsWith(r)) ?? null;

@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SearchableSelect } from '@/components/searchable-select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useToast } from '@/components/ui/toast';
 import { STOCK_ARTICLES, MOUVEMENTS_STOCK } from '@/lib/mock-data';
 
 const articleOptions = STOCK_ARTICLES.map((a) => ({ value: a.id, label: a.libelle, hint: `stock ${a.quantite}` }));
@@ -15,6 +16,7 @@ const articleOptions = STOCK_ARTICLES.map((a) => ({ value: a.id, label: a.libell
 const entrees = MOUVEMENTS_STOCK.filter((m) => m.type === 'ENTREE');
 
 export default function EntreeStockPage() {
+  const { toast } = useToast();
   const [article, setArticle] = useState('');
   const [qte, setQte] = useState('');
   const [fournisseur, setFournisseur] = useState('');
@@ -57,7 +59,10 @@ export default function EntreeStockPage() {
                 </div>
                 <Button
                   variant="brand" className="w-full "
-                  onClick={() => setSubmitted(true)}
+                  onClick={() => {
+                    setSubmitted(true);
+                    toast({ title: 'Enregistré', description: 'L\'entrée de stock a été enregistrée.' });
+                  }}
                   disabled={!article || !qte}
                 >
                   Enregistrer l&apos;entrée

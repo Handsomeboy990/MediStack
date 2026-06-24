@@ -78,6 +78,7 @@ export default function FacturesListPage() {
               <TableHead>Référence</TableHead>
               <TableHead>Patient</TableHead>
               <TableHead>Agent</TableHead>
+              <TableHead>Origine</TableHead>
               <TableHead className="text-right">Brut</TableHead>
               <TableHead className="text-right">Assurance</TableHead>
               <TableHead className="text-right">Net</TableHead>
@@ -91,6 +92,13 @@ export default function FacturesListPage() {
                 <TableCell className="font-bold text-primary">{f.id}</TableCell>
                 <TableCell className="font-medium">{f.patient}</TableCell>
                 <TableCell className="text-muted-foreground">{f.agent}</TableCell>
+                <TableCell>
+                  {f.origine === 'PRESCRIPTION' ? (
+                    <Badge variant="secondary">Prescription{f.estBrouillon ? ' · brouillon' : ''}</Badge>
+                  ) : (
+                    <Badge variant="secondary">Saisie caisse</Badge>
+                  )}
+                </TableCell>
                 <TableCell className="text-right">{fmt(f.montantBrut)}</TableCell>
                 <TableCell className="text-right text-emerald-600">{fmt(f.assurancePrise)}</TableCell>
                 <TableCell className="text-right font-semibold">{fmt(f.net)}</TableCell>
@@ -101,7 +109,7 @@ export default function FacturesListPage() {
           </TableBody>
           <TableFooter>
             <TableRow className="hover:bg-transparent">
-              <TableCell colSpan={4} className="text-xs uppercase text-muted-foreground">Totaux</TableCell>
+              <TableCell colSpan={5} className="text-xs uppercase text-muted-foreground">Totaux</TableCell>
               <TableCell className="text-right text-emerald-600">{fmt(totalAssurance)}</TableCell>
               <TableCell className="text-right text-primary">{fmt(totalFacture)}</TableCell>
               <TableCell className="text-right">{fmt(totalVerse)}</TableCell>

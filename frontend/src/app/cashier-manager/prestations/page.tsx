@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SearchableSelectField } from '@/components/searchable-select';
+import { useToast } from '@/components/ui/toast';
 import { PRESTATIONS, SPECIALITES } from '@/lib/mock-data';
 
 const specialiteOptions = SPECIALITES.map((s) => ({ value: s, label: s }));
@@ -19,6 +20,7 @@ const statutOptions = [
 ];
 
 export default function PrestationsPage() {
+  const { toast } = useToast();
   const [search, setSearch] = useState('');
   const filtered = PRESTATIONS.filter((p) =>
     p.libelle.toLowerCase().includes(search.toLowerCase()) ||
@@ -50,7 +52,7 @@ export default function PrestationsPage() {
             </div>
             <DialogFooter>
               <Button variant="outline">Annuler</Button>
-              <Button variant="brand" className="">Enregistrer</Button>
+              <Button variant="brand" className="" onClick={() => toast({ title: 'Enregistré', description: 'La prestation a été créée.' })}>Enregistrer</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -93,7 +95,7 @@ export default function PrestationsPage() {
                     </div>
                     <DialogFooter>
                       <Button variant="outline">Annuler</Button>
-                      <Button variant="brand" className="">Enregistrer</Button>
+                      <Button variant="brand" className="" onClick={() => toast({ title: 'Enregistré', description: 'La prestation a été mise à jour.' })}>Enregistrer</Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>

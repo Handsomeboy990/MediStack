@@ -9,7 +9,8 @@ import { log } from './logs-store';
 // d'assurance) sont conservés pour la durée de la session, ce qui permet de
 // démontrer l'enregistrement sans backend. La source initiale reste les
 // données mock.
-let patients: Patient[] = [...PATIENTS];
+const INITIAL_PATIENTS: Patient[] = [...PATIENTS];
+let patients: Patient[] = [...INITIAL_PATIENTS];
 const listeners = new Set<() => void>();
 
 function emit() {
@@ -29,6 +30,22 @@ export function addPatient(patient: Patient) {
   patients = [patient, ...patients];
   emit();
   log('CREATE', 'Patient', `Patient ${patient.prenom} ${patient.nom} (${patient.id}) créé`);
+}
+
+export function setPatients(next: Patient[], user = 'Système') {
+  patients = [...next];
+  emit();
+  log('UPDATE', 'Patient', `Jeu de données patients remplacé (${patients.length} entrées)`, user);
+}
+
+export function resetPatients(user = 'Système') {
+  patients = [...INITIAL_PATIENTS];
+  emit();
+  log('UPDATE', 'Patient', 'Jeu de données patients réinitialisé', user);
+}
+
+export function getPatientsSnapshot() {
+  return patients;
 }
 
 export function addCarteAssurance(patientId: string, carte: CarteAssurance) {

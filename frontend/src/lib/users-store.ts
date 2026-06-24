@@ -5,7 +5,8 @@ import { useSyncExternalStore } from 'react';
 import { UTILISATEURS, type Utilisateur } from './mock-data';
 import { log } from './logs-store';
 
-let users: Utilisateur[] = [...UTILISATEURS];
+const INITIAL_USERS: Utilisateur[] = [...UTILISATEURS];
+let users: Utilisateur[] = [...INITIAL_USERS];
 const listeners = new Set<() => void>();
 const emit = () => { for (const l of listeners) l(); };
 
@@ -14,6 +15,22 @@ export function addUtilisateur(u: Omit<Utilisateur, 'id' | 'creeLe'>) {
   users = [{ ...u, id, creeLe: new Date().toISOString().slice(0, 10) }, ...users];
   emit();
   log('CREATE', 'Utilisateur', `Compte ${u.prenom} ${u.nom} (${u.role}) créé`);
+}
+
+export function setUtilisateurs(next: Utilisateur[], user = 'Système') {
+  users = [...next];
+  emit();
+  log('UPDATE', 'Utilisateur', `Jeu de données utilisateurs remplacé (${users.length} entrées)`, user);
+}
+
+export function resetUtilisateurs(user = 'Système') {
+  users = [...INITIAL_USERS];
+  emit();
+  log('UPDATE', 'Utilisateur', 'Jeu de données utilisateurs réinitialisé', user);
+}
+
+export function getUtilisateursSnapshot() {
+  return users;
 }
 
 export function updateUtilisateur(id: string, patch: Partial<Utilisateur>) {

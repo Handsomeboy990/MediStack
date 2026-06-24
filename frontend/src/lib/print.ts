@@ -1,5 +1,12 @@
 import { CLINIQUE, LOGICIEL, STATUT_LABELS, fmt } from './mock-data';
 
+const QR_COLOR = '55bab3';
+
+function buildFactureQrUrl(f: PrintableFacture) {
+  const payload = `MediTrace|Facture:${f.id}|Patient:${f.patient}|Date:${f.date}|Net:${f.net}`;
+  return `https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=${encodeURIComponent(payload)}&color=${QR_COLOR}&format=png`;
+}
+
 const genereLe = () => `Document généré le ${new Date().toLocaleString('fr-FR')} par ${LOGICIEL}.`;
 
 // Données minimales nécessaires pour imprimer une facture ou un ticket. Couvre
@@ -53,6 +60,7 @@ function lignesRows(f: PrintableFacture) {
 }
 
 export function printFacture(f: PrintableFacture) {
+  const qrUrl = buildFactureQrUrl(f);
   const reste = f.net - f.verse;
   const statut = f.statut ? STATUT_LABELS[f.statut] : 'En attente';
   const css = `
@@ -70,6 +78,9 @@ export function printFacture(f: PrintableFacture) {
     .totaux { margin-top: 16px; margin-left: auto; width: 280px; font-size: 13px; }
     .totaux div { display: flex; justify-content: space-between; padding: 4px 0; }
     .totaux .net { border-top: 2px solid ${VERT}; margin-top: 4px; padding-top: 8px; font-size: 16px; font-weight: bold; color: ${VERT}; }
+    .qr-wrap { margin-top: 18px; display: flex; justify-content: flex-end; align-items: center; gap: 12px; }
+    .qr-wrap img { width: 110px; height: 110px; border: 1px solid #ddd; border-radius: 8px; padding: 4px; background: #fff; }
+    .qr-wrap p { margin: 0; font-size: 11px; color: #666; max-width: 180px; text-align: right; }
     footer { margin-top: 40px; border-top: 1px solid #ddd; padding-top: 12px; font-size: 11px; color: #888; text-align: center; }
   `;
   const body = `
@@ -94,12 +105,17 @@ export function printFacture(f: PrintableFacture) {
       <div><span>Versé</span><span>${fmt(f.verse)}</span></div>
       ${reste > 0 ? `<div><span>Reste à payer</span><span>${fmt(reste)}</span></div>` : ''}
     </div>
+    <div class="qr-wrap">
+      <p>Scanner ce QR code pour accéder à la référence partagée de la facture.</p>
+      <img src="${qrUrl}" alt="QR code facture" />
+    </div>
     <footer>Merci de votre confiance.<br>${genereLe()}</footer>
   `;
   openDocument(`Facture ${f.id}`, css, body);
 }
 
 export function printTicket(f: PrintableFacture, rendu = 0, monnaieRendue = true) {
+  const qrUrl = buildFactureQrUrl(f);
   const reste = f.net - f.verse;
   const items = f.lignes
     .map((l) => `<div class="it"><span>${l.libelle} x${l.qte}</span><span>${fmt(l.qte * l.pu)}</span></div>`)
@@ -111,6 +127,7 @@ export function printTicket(f: PrintableFacture, rendu = 0, monnaieRendue = true
     hr { border: none; border-top: 1px dashed #999; margin: 8px 0; }
     .it, .tot { display: flex; justify-content: space-between; padding: 2px 0; }
     .tot.net { font-weight: bold; font-size: 14px; color: ${VERT}; }
+    .qr { margin: 10px auto 0; width: 86px; height: 86px; border: 1px solid #ddd; border-radius: 6px; padding: 3px; background: #fff; display: block; }
     .small { font-size: 11px; color: #555; }
   `;
   const body = `
@@ -131,6 +148,7 @@ export function printTicket(f: PrintableFacture, rendu = 0, monnaieRendue = true
     ${rendu > 0 ? `<div class="tot"><span>Monnaie remise</span><span>${monnaieRendue ? 'Oui' : 'Non'}</span></div>` : ''}
     <div class="tot"><span>Mode</span><span>${f.modePaiement ?? '-'}</span></div>
     <hr>
+    <img class="qr" src="${qrUrl}" alt="QR code ticket" />
     <div class="t small">Merci de votre visite</div>
     <div class="t small" style="margin-top:6px;color:#888">${genereLe()}</div>
   `;

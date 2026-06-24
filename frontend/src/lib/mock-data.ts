@@ -50,6 +50,9 @@ export type Facture = {
   agent: string;
   modePaiement: string | null;
   lignes: LigneFacture[];
+  origine?: 'MANUEL' | 'PRESCRIPTION';
+  prescriptionId?: string | null;
+  estBrouillon?: boolean;
 };
 
 export const FACTURES: Facture[] = [
@@ -252,7 +255,7 @@ export const SPECIALITES = [
 ];
 
 export const ROLES_LIST = [
-  'Administrateur', 'Responsable de caisse', 'Agent de caisse', 'Agent magasinier', 'Ressources humaines',
+  'Administrateur', 'Médecin', 'Responsable de caisse', 'Agent de caisse', 'Agent magasinier', 'Ressources humaines',
 ];
 
 // ─── Helpers ─────────────────────────────────────────────────

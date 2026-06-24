@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SearchableSelectField } from '@/components/searchable-select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useToast } from '@/components/ui/toast';
 import { MEDECINS, SPECIALITES } from '@/lib/mock-data';
 
 const specialiteOptions = SPECIALITES.map((s) => ({ value: s, label: s }));
@@ -20,6 +21,7 @@ const statutOptions = [
 ];
 
 export default function MedecinsPage() {
+  const { toast } = useToast();
   const [search, setSearch] = useState('');
   const filtered = MEDECINS.filter(
     (m) =>
@@ -54,7 +56,7 @@ export default function MedecinsPage() {
             </div>
             <DialogFooter>
               <Button variant="outline">Annuler</Button>
-              <Button variant="brand" className="">Enregistrer</Button>
+              <Button variant="brand" className="" onClick={() => toast({ title: 'Enregistré', description: 'Le médecin a été ajouté.' })}>Enregistrer</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -109,7 +111,7 @@ export default function MedecinsPage() {
                       </div>
                       <DialogFooter>
                         <Button variant="outline">Annuler</Button>
-                        <Button variant="brand">Enregistrer</Button>
+                        <Button variant="brand" onClick={() => toast({ title: 'Enregistré', description: 'Les informations du médecin ont été mises à jour.' })}>Enregistrer</Button>
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>

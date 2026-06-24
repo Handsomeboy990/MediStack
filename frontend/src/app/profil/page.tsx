@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/components/ui/toast';
 
 const user = {
   nom: 'Ahouansou',
@@ -22,6 +23,7 @@ const user = {
 };
 
 export default function ProfilPage() {
+  const { toast } = useToast();
   const [open, setOpen] = useState(false);
 
   return (
@@ -63,7 +65,16 @@ export default function ProfilPage() {
                 </div>
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setOpen(false)}>Annuler</Button>
-                  <Button variant="brand" className="">Enregistrer</Button>
+                  <Button
+                    variant="brand"
+                    className=""
+                    onClick={() => {
+                      toast({ title: 'Enregistré', description: 'Les informations du profil ont été mises à jour.' });
+                      setOpen(false);
+                    }}
+                  >
+                    Enregistrer
+                  </Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>

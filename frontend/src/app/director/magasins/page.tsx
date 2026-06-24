@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SearchableSelect } from '@/components/searchable-select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useToast } from '@/components/ui/toast';
 import { addMagasin, removeMagasin, useMagasins } from '@/lib/magasins-store';
 
 const TYPE_OPTIONS = [
@@ -21,6 +22,7 @@ const TYPE_OPTIONS = [
 const EMPTY = { nom: '', type: 'MAGASIN', responsable: '', localisation: '' };
 
 export default function MagasinsPage() {
+  const { toast } = useToast();
   const magasins = useMagasins();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(EMPTY);
@@ -29,6 +31,7 @@ export default function MagasinsPage() {
   const save = () => {
     if (!form.nom.trim()) return;
     addMagasin({ nom: form.nom.trim(), type: form.type as 'MAGASIN' | 'PHARMACIE', responsable: form.responsable.trim(), localisation: form.localisation.trim() });
+    toast({ title: 'Enregistré', description: 'Le site a été créé avec succès.' });
     setForm(EMPTY);
     setOpen(false);
   };

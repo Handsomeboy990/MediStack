@@ -20,6 +20,7 @@ let logs: LogEntry[] = [
   { id: 'LOG-seed-2', date: '2026-06-23T08:05:00', user: 'Hodonou F.', action: 'CREATE', entity: 'Mouvement stock', description: 'Entrée de 50 Paracétamol 500 mg' },
   { id: 'LOG-seed-1', date: '2026-06-22T16:40:00', user: 'Gbaguidi A.', action: 'DELETE', entity: 'Prestation', description: 'Prestation obsolète supprimée du catalogue' },
 ];
+const INITIAL_LOGS: LogEntry[] = [...logs];
 
 const listeners = new Set<() => void>();
 const emit = () => { for (const l of listeners) l(); };
@@ -29,6 +30,20 @@ export function log(action: LogAction, entity: string, description: string, user
   counter += 1;
   logs = [{ id: `LOG-${Date.now()}-${counter}`, date: new Date().toISOString(), user, action, entity, description }, ...logs];
   emit();
+}
+
+export function setLogs(next: LogEntry[]) {
+  logs = [...next];
+  emit();
+}
+
+export function resetLogs() {
+  logs = [...INITIAL_LOGS];
+  emit();
+}
+
+export function getLogsSnapshot() {
+  return logs;
 }
 
 function subscribe(l: () => void) {
