@@ -326,6 +326,7 @@ export default function PrescriptionPage() {
       console.log('suggestions (%d):', payload?.suggestions?.length ?? 0, payload?.suggestions);
       console.groupEnd();
       const catalogIndex = new Map(PRESCRIPTION_CATALOGUE.map((item) => [item.code, item]));
+      const nextTranscription = payload?.transcription ?? '';
       const nextSuggestions = (payload?.suggestions ?? [])
         .map((line, index) => {
           const code = line.code ?? '';
