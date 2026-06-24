@@ -189,7 +189,7 @@ async function extractWithDeepseek(transcription: string, catalog: CatalogItem[]
     return fallbackSuggestions(transcription, catalog);
   }
 
-  const limitedCatalog = catalog.slice(0, 120).map((item) => ({
+  const fullCatalog = catalog.map((item) => ({
     code: item.code,
     libelle: item.libelle,
     categorie: item.categorie,
@@ -197,17 +197,34 @@ async function extractWithDeepseek(transcription: string, catalog: CatalogItem[]
   }));
 
   const systemPrompt =
-    'Tu es un assistant clinique. Retourne uniquement un JSON valide avec la forme {"lignes":[{"code":"","libelle":"","categorie":"ACTE|BILAN","qte":1,"confidence":0.0,"reason":""}]}. N invente pas de categorie hors ACTE/BILAN. Confidence entre 0 et 1.';
+    'Tu es un assistant clinique expert en reconciliation de transcription vocale medicale bruitee. Le texte peut contenir des biais audio: mots tronques, accents, confusion phonétique, fautes orthographiques, parasites sonores, termes melanges. Tu dois corriger implicitement ces erreurs en choisissant uniquement des elements du catalogue fourni. Retourne uniquement un JSON valide avec la forme {"lignes":[{"code":"","libelle":"","categorie":"ACTE|BILAN","qte":1,"confidence":0.0,"reason":""}]}. N invente jamais un code ou une categorie hors ACTE/BILAN. Si ambigu, choisis la meilleure correspondance du catalogue avec confidence plus basse.';
 
   const userPrompt = [
     'Transcription de note vocale medecin:',
     transcription,
     '',
-    'Catalogue autorise:',
-    JSON.stringify(limitedCatalog),
+    'Important: la transcription peut etre imparfaite a cause du son. Corrige les erreurs phonétiques et orthographiques probables avant mapping.',
     '',
-    'Extrait les actes et bilans probables avec quantite.',
+    'Catalogue complet autorise (utiliser uniquement ces references):',
+    JSON.stringify(fullCatalog),
+    '',
+    'Extrait les actes et bilans probables avec quantite. Fusionne les doublons de meme code.',
   ].join('\n');
+
+  console.info(
+    '[voice-prescription][deepseek] final-prompt',
+    JSON.stringify(
+      {
+        model: DEEPSEEK_MODEL,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
+        ],
+      },
+      null,
+      2,
+    ),
+  );
 
   const response = await fetch(`${DEEPSEEK_API_URL}/chat/completions`, {
     method: 'POST',
@@ -232,6 +249,7 @@ async function extractWithDeepseek(transcription: string, catalog: CatalogItem[]
   }
 
   const payload = await response.json().catch(() => null);
+  console.info('[voice-prescription][deepseek] raw-response', JSON.stringify(payload, null, 2));
   const content = payload?.choices?.[0]?.message?.content;
   const rawLines = parseDeepseekContent(content);
 
