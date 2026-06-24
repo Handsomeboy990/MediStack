@@ -294,6 +294,10 @@ export default function PrescriptionPage() {
       formData.append('file', uploadFile);
       formData.append('catalog', JSON.stringify(PRESCRIPTION_CATALOGUE));
 
+      console.group('[voice-prescription] prompt envoyé à l\'IA');
+      console.log('catalogue (%d items):', PRESCRIPTION_CATALOGUE.length, PRESCRIPTION_CATALOGUE);
+      console.groupEnd();
+
       const response = await fetch('/api/doctor/voice-prescription', {
         method: 'POST',
         body: formData,
@@ -317,7 +321,10 @@ export default function PrescriptionPage() {
         throw new Error(payload?.message ?? 'Extraction indisponible');
       }
 
-      const nextTranscription = payload?.transcription ?? '';
+      console.group('[voice-prescription] réponse brute de l\'IA');
+      console.log('transcription:', payload?.transcription);
+      console.log('suggestions (%d):', payload?.suggestions?.length ?? 0, payload?.suggestions);
+      console.groupEnd();
       const catalogIndex = new Map(PRESCRIPTION_CATALOGUE.map((item) => [item.code, item]));
       const nextSuggestions = (payload?.suggestions ?? [])
         .map((line, index) => {
