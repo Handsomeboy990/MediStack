@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AddCarteDialog } from '@/components/add-carte-dialog';
+import { EditPatientDialog } from '@/components/edit-patient-dialog';
 import { FACTURES, STATUT_LABELS, STATUT_VARIANTS, fmt } from '@/lib/mock-data';
 import { usePatient } from '@/lib/patients-store';
 
@@ -29,14 +30,17 @@ export default function FichePatientPage({ params }: { params: { id: string } })
 
   return (
     <main className="space-y-4">
-      <div className="flex items-center gap-3">
-        <Link href="/cashier/patients">
-          <Button variant="outline" size="sm" className="gap-2"><ArrowLeft className="h-4 w-4" />Retour</Button>
-        </Link>
-        <div>
-          <h1 className="text-lg font-bold">{patient.prenom} {patient.nom}</h1>
-          <p className="text-xs text-muted-foreground">{patient.id}</p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <Link href="/cashier/patients">
+            <Button variant="outline" size="sm" className="gap-2"><ArrowLeft className="h-4 w-4" />Retour</Button>
+          </Link>
+          <div>
+            <h1 className="text-lg font-bold">{patient.prenom} {patient.nom}</h1>
+            <p className="text-xs text-muted-foreground">{patient.id}</p>
+          </div>
         </div>
+        <EditPatientDialog patient={patient} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">

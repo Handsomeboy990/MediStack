@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { SPECIALITES } from '@/lib/mock-data';
 
 export default function SpecialitesPage() {
@@ -43,23 +44,28 @@ export default function SpecialitesPage() {
         </Dialog>
       </div>
 
-      <Card>
-        <CardHeader><CardTitle className="text-base">{specs.length} spécialité(s)</CardTitle></CardHeader>
-        <CardContent className="space-y-2">
-          {specs.map((s, i) => (
-            <div key={i} className="flex items-center justify-between rounded-xl border border-border p-3">
-              <p className="text-sm font-medium">{s}</p>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-muted-foreground hover:text-destructive"
-                onClick={() => setSpecs(specs.filter((_, j) => j !== i))}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-          ))}
-        </CardContent>
+      <Card className="overflow-hidden">
+        <CardHeader><CardTitle className="text-sm">{specs.length} spécialité(s)</CardTitle></CardHeader>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Spécialité</TableHead>
+              <TableHead className="text-right">Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {specs.map((s, i) => (
+              <TableRow key={i}>
+                <TableCell className="font-medium">{s}</TableCell>
+                <TableCell className="text-right">
+                  <button onClick={() => setSpecs(specs.filter((_, j) => j !== i))} className="inline-flex items-center gap-1 text-xs font-medium text-destructive hover:underline">
+                    <Trash2 className="h-3.5 w-3.5" />Supprimer
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </Card>
     </main>
   );

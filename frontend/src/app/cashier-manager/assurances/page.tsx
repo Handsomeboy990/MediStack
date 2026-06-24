@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SearchableSelectField } from '@/components/searchable-select';
+import { useToast } from '@/components/ui/toast';
 import { ASSURANCES } from '@/lib/mock-data';
 
 const statutOptions = [
@@ -17,6 +18,7 @@ const statutOptions = [
 ];
 
 export default function AssurancesPage() {
+  const { toast } = useToast();
   return (
     <main className="space-y-6">
       <div className="flex items-center justify-between">
@@ -39,7 +41,7 @@ export default function AssurancesPage() {
             </div>
             <DialogFooter>
               <Button variant="outline">Annuler</Button>
-              <Button variant="brand" className="">Enregistrer</Button>
+              <Button variant="brand" className="" onClick={() => toast({ title: 'Enregistré', description: 'L\'organisme d\'assurance a été créé.' })}>Enregistrer</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -77,7 +79,7 @@ export default function AssurancesPage() {
                     </div>
                     <DialogFooter>
                       <Button variant="outline">Annuler</Button>
-                      <Button variant="brand" className="">Enregistrer</Button>
+                      <Button variant="brand" className="" onClick={() => toast({ title: 'Enregistré', description: 'L\'organisme d\'assurance a été mis à jour.' })}>Enregistrer</Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>

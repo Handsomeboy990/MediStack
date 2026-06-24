@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from 'react';
 
 import { MAGASINS, type Magasin } from './mock-data';
+import { log } from './logs-store';
 
 // Magasin client pour les magasins et pharmacies. La création et la suppression
 // sont conservées pour la durée de la session. Le magasin central est protégé.
@@ -23,11 +24,14 @@ export function addMagasin(m: Omit<Magasin, 'id' | 'central'>) {
   const id = `${prefix}-${String(magasins.length + 1).padStart(3, '0')}`;
   magasins = [...magasins, { ...m, id, central: false }];
   emit();
+  log('CREATE', 'Magasin', `${m.type === 'PHARMACIE' ? 'Pharmacie' : 'Magasin'} ${m.nom} créé`);
 }
 
 export function removeMagasin(id: string) {
-  magasins = magasins.filter((m) => m.id !== id || m.central);
+  const m = magasins.find((x) => x.id === id && !x.central);
+  magasins = magasins.filter((x) => x.id !== id || x.central);
   emit();
+  if (m) log('DELETE', 'Magasin', `${m.type === 'PHARMACIE' ? 'Pharmacie' : 'Magasin'} ${m.nom} supprimé`);
 }
 
 export function useMagasins() {

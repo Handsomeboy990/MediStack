@@ -21,6 +21,8 @@ export type Patient = {
   urgenceNom: string;
   urgenceTel: string;
   cartesAssurance: CarteAssurance[];
+  nationalite?: 'BENINOIS' | 'ETRANGER';
+  npi?: string;
 };
 
 export const PATIENTS: Patient[] = [
@@ -46,8 +48,11 @@ export type Facture = {
   verse: number;
   statut: 'PAYE' | 'PARTIEL' | 'ANNULE' | 'EN_ATTENTE';
   agent: string;
-  modePaiement: 'ESPECES' | 'MOBILE' | 'MIXTE' | null;
+  modePaiement: string | null;
   lignes: LigneFacture[];
+  origine?: 'MANUEL' | 'PRESCRIPTION';
+  prescriptionId?: string | null;
+  estBrouillon?: boolean;
 };
 
 export const FACTURES: Facture[] = [
@@ -171,6 +176,40 @@ export const MAGASINS: Magasin[] = [
   { id: 'MAG-001', nom: 'Magasin annexe Calavi', type: 'MAGASIN', responsable: 'Sossou Régis', localisation: 'Abomey-Calavi', central: false },
 ];
 
+// ─── Établissement et logiciel ───────────────────────────────
+// Informations de l'établissement affichées en en-tête des documents imprimés.
+// Valeurs à compléter par l'équipe ; le nom du logiciel n'apparaît qu'en pied.
+export const CLINIQUE = {
+  nom: 'Clinique MediTrust',
+  adresse: 'Lot 1234, Cotonou, Bénin',
+  telephone: '01 21 30 00 00',
+  email: 'contact@meditrust.bj',
+  ifu: 'IFU 3201900000000',
+};
+export const LOGICIEL = 'MediTrace';
+
+// ─── ANIP (simulation) ───────────────────────────────────────
+// Récupération des données d'identité par NPI. À brancher sur l'API ANIP réelle.
+export type AnipRecord = { npi: string; nom: string; prenom: string; dateNaissance: string; adresse: string };
+const ANIP_DB: AnipRecord[] = [
+  { npi: '0123456789', nom: 'Sossou', prenom: 'Marc', dateNaissance: '1988-04-12', adresse: 'Cotonou, Akpakpa' },
+  { npi: '1987654320', nom: 'Tchégnon', prenom: 'Reine', dateNaissance: '1995-09-23', adresse: 'Porto-Novo, Djassin' },
+];
+
+// Un NPI valide comporte exactement 10 chiffres.
+export function isNpiValide(npi: string) {
+  return /^\d{10}$/.test(npi.trim());
+}
+
+export function lookupNpi(npi: string): AnipRecord | null {
+  const clean = npi.trim();
+  if (!isNpiValide(clean)) return null;
+  const found = ANIP_DB.find((r) => r.npi === clean);
+  if (found) return found;
+  // Retour générique pour tout NPI valide, afin que la démo fonctionne.
+  return { npi: clean, nom: 'Aïkpé', prenom: 'Honoré', dateNaissance: '1990-01-01', adresse: 'Cotonou, Bénin' };
+}
+
 // ─── Utilisateurs ────────────────────────────────────────────
 export type Utilisateur = {
   id: string;
@@ -216,7 +255,7 @@ export const SPECIALITES = [
 ];
 
 export const ROLES_LIST = [
-  'Administrateur', 'Responsable de caisse', 'Agent de caisse', 'Agent magasinier', 'Ressources humaines',
+  'Administrateur', 'Médecin', 'Responsable de caisse', 'Agent de caisse', 'Agent magasinier', 'Ressources humaines',
 ];
 
 // ─── Helpers ─────────────────────────────────────────────────

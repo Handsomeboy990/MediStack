@@ -9,6 +9,11 @@ export interface RoleDefinition {
 
 export const ROLES: RoleDefinition[] = [
   {
+    slug: 'doctor',
+    nom: 'Médecin',
+    description: 'Consultation, prescription médicale et génération de brouillons de facture.',
+  },
+  {
     slug: 'director',
     nom: 'Administrateur',
     description: 'Vision globale, statistiques et supervision du centre.',

@@ -1,32 +1,17 @@
+'use client';
+
 import Link from 'next/link';
 import { BarChart3, Shield, Users, Warehouse } from 'lucide-react';
 
+import { DemoControlPanel } from '@/components/demo-control-panel';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { KpiCard } from '@/components/kpi-card';
 import { Donut, LineChart } from '@/components/charts';
-import { FACTURES, UTILISATEURS, STOCK_ARTICLES, fmt } from '@/lib/mock-data';
-
-const payees = FACTURES.filter((f) => f.statut === 'PAYE');
-const revenue = payees.reduce((s, f) => s + f.net, 0);
-const alerts = STOCK_ARTICLES.filter((a) => a.quantite <= a.seuil).length;
-
-const kpis = [
-  { label: 'Chiffre d’affaires', value: fmt(revenue), tone: 'primary' as const, hint: 'Factures payées' },
-  { label: 'Utilisateurs actifs', value: String(UTILISATEURS.filter((u) => u.actif).length), tone: 'success' as const, hint: 'Comptes actifs' },
-  { label: 'Factures totales', value: String(FACTURES.length), tone: 'neutral' as const, hint: 'Toutes périodes' },
-  { label: 'Alertes stock', value: String(alerts), tone: alerts > 0 ? ('warning' as const) : ('neutral' as const), hint: 'Articles en tension' },
-];
+import { STOCK_ARTICLES, fmt } from '@/lib/mock-data';
+import { useFactures } from '@/lib/factures-store';
+import { useUtilisateurs } from '@/lib/users-store';
 
 const MODE_LABELS: Record<string, string> = { ESPECES: 'Espèces', MOBILE: 'Mobile money', MIXTE: 'Mixte' };
-const parMode = ['ESPECES', 'MOBILE', 'MIXTE'].map((m) => ({
-  label: MODE_LABELS[m],
-  value: payees.filter((f) => f.modePaiement === m).reduce((s, f) => s + f.net, 0),
-}));
-
-const evolution = [
-  { label: 'Jan', value: 3200000 }, { label: 'Fév', value: 3800000 }, { label: 'Mar', value: 4100000 },
-  { label: 'Avr', value: 3600000 }, { label: 'Mai', value: 4500000 }, { label: 'Juin', value: revenue },
-];
 
 const navCards = [
   { href: '/director/stats', label: 'Statistiques', desc: 'Revenus, médecins, évolution', icon: BarChart3 },
@@ -36,6 +21,30 @@ const navCards = [
 ];
 
 export default function DirectorPage() {
+  const factures = useFactures();
+  const users = useUtilisateurs();
+
+  const payees = factures.filter((f) => f.statut === 'PAYE');
+  const revenue = payees.reduce((s, f) => s + f.net, 0);
+  const alerts = STOCK_ARTICLES.filter((a) => a.quantite <= a.seuil).length;
+
+  const kpis = [
+    { label: 'Chiffre d’affaires', value: fmt(revenue), tone: 'primary' as const, hint: 'Factures payées' },
+    { label: 'Utilisateurs actifs', value: String(users.filter((u) => u.actif).length), tone: 'success' as const, hint: 'Comptes actifs' },
+    { label: 'Factures totales', value: String(factures.length), tone: 'neutral' as const, hint: 'Toutes périodes' },
+    { label: 'Alertes stock', value: String(alerts), tone: alerts > 0 ? ('warning' as const) : ('neutral' as const), hint: 'Articles en tension' },
+  ];
+
+  const parMode = ['ESPECES', 'MOBILE', 'MIXTE'].map((m) => ({
+    label: MODE_LABELS[m],
+    value: payees.filter((f) => f.modePaiement === m).reduce((s, f) => s + f.net, 0),
+  }));
+
+  const evolution = [
+    { label: 'Jan', value: Math.round(revenue * 0.68) }, { label: 'Fév', value: Math.round(revenue * 0.75) }, { label: 'Mar', value: Math.round(revenue * 0.81) },
+    { label: 'Avr', value: Math.round(revenue * 0.78) }, { label: 'Mai', value: Math.round(revenue * 0.91) }, { label: 'Juin', value: revenue },
+  ];
+
   return (
     <main className="space-y-6">
       <div>
@@ -57,6 +66,8 @@ export default function DirectorPage() {
           <CardContent><Donut data={parMode} format={fmt} /></CardContent>
         </Card>
       </div>
+
+      <DemoControlPanel />
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {navCards.map((c) => {

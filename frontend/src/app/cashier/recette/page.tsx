@@ -12,29 +12,43 @@ import { FACTURES, fmt } from '@/lib/mock-data';
 
 const myAgent = 'Ahouansou B.';
 const MODE_LABELS: Record<string, string> = { ESPECES: 'Espèces', MOBILE: 'Mobile money', MIXTE: 'Mixte' };
+const CATEGORIES = ['Espèces', 'Paiement virtuel', 'Chèque', 'Mixte'];
+
+// Regroupe les modes de paiement détaillés en grandes catégories de recette.
+function categorie(mode: string | null) {
+  if (!mode) return 'Autre';
+  if (mode === 'ESPECES' || mode === 'Espèces') return 'Espèces';
+  if (mode === 'MIXTE' || mode === 'Mixte') return 'Mixte';
+  if (mode.startsWith('Chèque')) return 'Chèque';
+  return 'Paiement virtuel';
+}
 
 export default function RecettePage() {
-  const [date, setDate] = useState('2026-06-23');
-  const myFacs = FACTURES.filter((f) => f.date === date && f.agent === myAgent);
+  const [dateDebut, setDateDebut] = useState('2026-06-23');
+  const [dateFin, setDateFin] = useState('2026-06-23');
+  const myFacs = FACTURES.filter((f) => f.agent === myAgent && (!dateDebut || f.date >= dateDebut) && (!dateFin || f.date <= dateFin));
   const soldees = myFacs.filter((f) => f.statut === 'PAYE');
   const encaisse = soldees.reduce((s, f) => s + f.verse, 0);
   const partAssurance = myFacs.reduce((s, f) => s + f.assurancePrise, 0);
   const restant = myFacs.filter((f) => f.statut === 'PARTIEL').reduce((s, f) => s + (f.net - f.verse), 0);
 
-  const parMode = ['ESPECES', 'MOBILE', 'MIXTE'].map((m) => ({
-    label: MODE_LABELS[m],
-    val: soldees.filter((f) => f.modePaiement === m).reduce((s, f) => s + f.verse, 0),
-  }));
+  const parCategorie = CATEGORIES.map((cat) => ({
+    label: cat,
+    val: soldees.filter((f) => categorie(f.modePaiement) === cat).reduce((s, f) => s + f.verse, 0),
+  })).filter((r) => r.val > 0 || r.label !== 'Mixte');
 
   return (
     <main className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-lg font-bold">Recette journalière</h1>
+          <h1 className="text-lg font-bold">Recette</h1>
           <p className="text-sm text-muted-foreground">{myAgent}</p>
         </div>
-        <div className="flex items-center gap-2">
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="h-9 rounded-md border border-input bg-background px-3 text-sm" />
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs text-muted-foreground">Du</span>
+          <input type="date" value={dateDebut} onChange={(e) => setDateDebut(e.target.value)} className="h-9 rounded-md border border-input bg-background px-3 text-sm" />
+          <span className="text-xs text-muted-foreground">au</span>
+          <input type="date" value={dateFin} onChange={(e) => setDateFin(e.target.value)} className="h-9 rounded-md border border-input bg-background px-3 text-sm" />
           <Button variant="brand" className="gap-2" onClick={() => window.print()}><Printer className="h-4 w-4" />Imprimer</Button>
         </div>
       </div>
@@ -46,18 +60,33 @@ export default function RecettePage() {
         <KpiCard label="Factures émises" value={String(myFacs.length)} tone="neutral" hint="Toutes statuts" />
       </div>
 
-      <Card>
-        <CardHeader><CardTitle className="text-sm">Répartition par mode de paiement</CardTitle></CardHeader>
-        <CardContent className="space-y-3">
-          {parMode.map((r) => (
-            <div key={r.label} className="space-y-1">
-              <div className="flex justify-between text-sm"><span>{r.label}</span><strong className="text-primary">{fmt(r.val)}</strong></div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                <div className="h-2 rounded-full bg-primary" style={{ width: encaisse > 0 ? `${Math.round((r.val / encaisse) * 100)}%` : '0%' }} />
-              </div>
-            </div>
-          ))}
-        </CardContent>
+      <Card className="overflow-hidden">
+        <CardHeader><CardTitle className="text-sm">Répartition des encaissements</CardTitle></CardHeader>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Mode de paiement</TableHead>
+              <TableHead className="text-right">Montant</TableHead>
+              <TableHead className="text-right">Part</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {parCategorie.map((r) => (
+              <TableRow key={r.label}>
+                <TableCell className="font-medium">{r.label}</TableCell>
+                <TableCell className="text-right font-semibold">{fmt(r.val)}</TableCell>
+                <TableCell className="text-right text-muted-foreground">{encaisse > 0 ? Math.round((r.val / encaisse) * 100) : 0}%</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <TableFooter>
+            <TableRow className="hover:bg-transparent">
+              <TableCell className="text-xs uppercase text-muted-foreground">Total</TableCell>
+              <TableCell className="text-right text-primary">{fmt(encaisse)}</TableCell>
+              <TableCell />
+            </TableRow>
+          </TableFooter>
+        </Table>
       </Card>
 
       <Card className="overflow-hidden">
