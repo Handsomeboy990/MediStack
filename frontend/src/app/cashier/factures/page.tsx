@@ -11,18 +11,21 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { KpiCard } from '@/components/kpi-card';
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { FACTURES, STATUT_LABELS, STATUT_VARIANTS, fmt } from '@/lib/mock-data';
+import { STATUT_LABELS, STATUT_VARIANTS, fmt } from '@/lib/mock-data';
+import { useFactures } from '@/lib/factures-store';
 
 const STATUTS = ['Tous', 'PAYE', 'PARTIEL', 'EN_ATTENTE', 'ANNULE'];
 
 export default function FacturesListPage() {
   const router = useRouter();
-  const [date, setDate] = useState('2026-06-23');
+  const [dateDebut, setDateDebut] = useState('');
+  const [dateFin, setDateFin] = useState('');
   const [search, setSearch] = useState('');
   const [statut, setStatut] = useState('Tous');
+  const all = useFactures();
 
-  const factures = FACTURES.filter((f) => {
-    const matchDate = f.date === date;
+  const factures = all.filter((f) => {
+    const matchDate = (!dateDebut || f.date >= dateDebut) && (!dateFin || f.date <= dateFin);
     const matchSearch = f.patient.toLowerCase().includes(search.toLowerCase()) || f.id.toLowerCase().includes(search.toLowerCase());
     const matchStatut = statut === 'Tous' || f.statut === statut;
     return matchDate && matchSearch && matchStatut;
@@ -54,7 +57,12 @@ export default function FacturesListPage() {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input placeholder="Rechercher un patient ou une référence..." className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
           </div>
-          <Input type="date" className="w-full sm:w-44" value={date} onChange={(e) => setDate(e.target.value)} />
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-muted-foreground">Du</span>
+            <Input type="date" className="w-36" value={dateDebut} onChange={(e) => setDateDebut(e.target.value)} />
+            <span className="text-xs text-muted-foreground">au</span>
+            <Input type="date" className="w-36" value={dateFin} onChange={(e) => setDateFin(e.target.value)} />
+          </div>
           <div className="flex flex-wrap gap-1.5">
             {STATUTS.map((s) => (
               <button key={s} onClick={() => setStatut(s)} className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ${statut === s ? 'bg-primary text-primary-foreground' : 'border border-border text-muted-foreground hover:bg-muted'}`}>
@@ -70,6 +78,7 @@ export default function FacturesListPage() {
               <TableHead>Référence</TableHead>
               <TableHead>Patient</TableHead>
               <TableHead>Agent</TableHead>
+              <TableHead>Origine</TableHead>
               <TableHead className="text-right">Brut</TableHead>
               <TableHead className="text-right">Assurance</TableHead>
               <TableHead className="text-right">Net</TableHead>
@@ -83,6 +92,13 @@ export default function FacturesListPage() {
                 <TableCell className="font-bold text-primary">{f.id}</TableCell>
                 <TableCell className="font-medium">{f.patient}</TableCell>
                 <TableCell className="text-muted-foreground">{f.agent}</TableCell>
+                <TableCell>
+                  {f.origine === 'PRESCRIPTION' ? (
+                    <Badge variant="secondary">Prescription{f.estBrouillon ? ' · brouillon' : ''}</Badge>
+                  ) : (
+                    <Badge variant="secondary">Saisie caisse</Badge>
+                  )}
+                </TableCell>
                 <TableCell className="text-right">{fmt(f.montantBrut)}</TableCell>
                 <TableCell className="text-right text-emerald-600">{fmt(f.assurancePrise)}</TableCell>
                 <TableCell className="text-right font-semibold">{fmt(f.net)}</TableCell>
@@ -93,7 +109,7 @@ export default function FacturesListPage() {
           </TableBody>
           <TableFooter>
             <TableRow className="hover:bg-transparent">
-              <TableCell colSpan={4} className="text-xs uppercase text-muted-foreground">Totaux</TableCell>
+              <TableCell colSpan={5} className="text-xs uppercase text-muted-foreground">Totaux</TableCell>
               <TableCell className="text-right text-emerald-600">{fmt(totalAssurance)}</TableCell>
               <TableCell className="text-right text-primary">{fmt(totalFacture)}</TableCell>
               <TableCell className="text-right">{fmt(totalVerse)}</TableCell>

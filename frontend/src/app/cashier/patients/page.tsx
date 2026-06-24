@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { NewPatientDialog } from '@/components/new-patient-dialog';
+import { EditPatientDialog } from '@/components/edit-patient-dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { usePatients } from '@/lib/patients-store';
 
@@ -45,10 +46,12 @@ export default function PatientsPage() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>N°</TableHead>
               <TableHead>Patient</TableHead>
               <TableHead>Téléphone</TableHead>
               <TableHead>Adresse</TableHead>
               <TableHead>Assurance</TableHead>
+              <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -56,10 +59,8 @@ export default function PatientsPage() {
               const carte = p.cartesAssurance[0];
               return (
                 <TableRow key={p.id} className="cursor-pointer" onClick={() => router.push(`/cashier/patients/${p.id}`)}>
-                  <TableCell>
-                    <p className="font-medium">{p.prenom} {p.nom}</p>
-                    <p className="text-xs text-muted-foreground">{p.id}</p>
-                  </TableCell>
+                  <TableCell className="font-medium text-primary">{p.id}</TableCell>
+                  <TableCell className="font-medium">{p.prenom} {p.nom}</TableCell>
                   <TableCell className="text-muted-foreground">{p.telephone}</TableCell>
                   <TableCell className="text-muted-foreground">{p.adresse}</TableCell>
                   <TableCell>
@@ -70,6 +71,9 @@ export default function PatientsPage() {
                     ) : (
                       <Badge variant="secondary">Sans assurance</Badge>
                     )}
+                  </TableCell>
+                  <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                    <EditPatientDialog patient={p} />
                   </TableCell>
                 </TableRow>
               );

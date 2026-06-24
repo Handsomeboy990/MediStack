@@ -9,10 +9,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SearchableSelect } from '@/components/searchable-select';
+import { NewPatientDialog } from '@/components/new-patient-dialog';
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { MEDECINS, PRESTATIONS, fmt } from '@/lib/mock-data';
 import { printFacture, printTicket, type PrintableFacture } from '@/lib/print';
 import { usePatients } from '@/lib/patients-store';
+import { addFacture, nextFactureId } from '@/lib/factures-store';
 
 type Ligne = { libelle: string; qte: number; pu: number };
 
@@ -32,6 +34,9 @@ export default function NouvelleFacturePage() {
   const [mode, setMode] = useState('Espèces');
   const [montantRecu, setMontantRecu] = useState('');
   const [monnaieRendue, setMonnaieRendue] = useState(true);
+  const [numeroCheque, setNumeroCheque] = useState('');
+  const [banque, setBanque] = useState('');
+  const [valideId, setValideId] = useState('');
 
   const patient = patients.find((p) => p.id === patientId) ?? patients[0];
   const carte = patient?.cartesAssurance.find((c) => c.id === carteId);
@@ -67,7 +72,29 @@ export default function NouvelleFacturePage() {
     net,
     verse: Number(montantRecu || 0),
     statut: 'EN_ATTENTE',
-    modePaiement: mode,
+    modePaiement: mode === 'Chèque' && numeroCheque ? `Chèque ${numeroCheque}${banque ? ` (${banque})` : ''}` : mode,
+  };
+
+  const valider = () => {
+    if (lignes.length === 0 || !patient) return;
+    const verse = Math.min(recu, net);
+    const statut = verse >= net && net > 0 ? 'PAYE' : verse > 0 ? 'PARTIEL' : 'EN_ATTENTE';
+    const id = nextFactureId(draft.date);
+    addFacture({
+      id,
+      patientId: patient.id,
+      patient: `${patient.prenom} ${patient.nom}`,
+      date: draft.date,
+      montantBrut: brut,
+      assurancePrise: assurance,
+      net,
+      verse,
+      statut,
+      agent: draft.agent,
+      modePaiement: draft.modePaiement ?? null,
+      lignes,
+    });
+    setValideId(id);
   };
 
   return (
@@ -79,12 +106,27 @@ export default function NouvelleFacturePage() {
         <h1 className="text-lg font-bold">Nouvelle facture</h1>
       </div>
 
+      {valideId && (
+        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+          <span>Facture <strong>{valideId}</strong> enregistrée.</span>
+          <Link href={`/cashier/factures/${valideId}`} className="font-medium text-emerald-700 hover:underline">Voir la facture</Link>
+          <Link href="/cashier/factures/nouveau" className="ml-auto font-medium text-emerald-700 hover:underline">Nouvelle facture</Link>
+        </div>
+      )}
+
       <div className="flex flex-col gap-4 xl:flex-row">
         {/* Colonne gauche : patient + médecins */}
         <div className="flex w-full shrink-0 flex-col gap-4 xl:w-72">
           <div className="space-y-1.5">
             <Label>Patient</Label>
-            <SearchableSelect options={patientOptions} value={patientId} onChange={(v) => { setPatientId(v); setCarteId('aucune'); }} placeholder="Rechercher un patient..." />
+            <div className="flex gap-2">
+              <SearchableSelect className="flex-1" options={patientOptions} value={patientId} onChange={(v) => { setPatientId(v); setCarteId('aucune'); }} placeholder="Rechercher un patient..." />
+              <NewPatientDialog
+                onCreated={(id) => { setPatientId(id); setCarteId('aucune'); }}
+                trigger={<Button variant="outline" size="icon" className="shrink-0" title="Nouveau patient"><Plus className="h-4 w-4" /></Button>}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">Patient introuvable ? Ajoutez-le avec le bouton +.</p>
           </div>
 
           <Card className="overflow-hidden">
@@ -96,14 +138,22 @@ export default function NouvelleFacturePage() {
               </div>
             </div>
             <CardContent className="space-y-3 p-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs">Carte d&apos;assurance</Label>
-                <SearchableSelect options={carteOptions} value={carteId} onChange={setCarteId} placeholder="Aucune assurance" />
-              </div>
-              <div className="flex items-center justify-between rounded-lg border border-border p-3 text-sm">
-                <span className="flex items-center gap-2 text-muted-foreground"><ShieldCheck className="h-4 w-4 text-primary" />Couverture</span>
-                <strong className="text-primary">{taux}%</strong>
-              </div>
+              {patient && patient.cartesAssurance.length > 0 ? (
+                <>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">Carte d&apos;assurance</Label>
+                    <SearchableSelect options={carteOptions} value={carteId} onChange={setCarteId} placeholder="Aucune assurance" />
+                  </div>
+                  {carte && (
+                    <div className="flex items-center justify-between rounded-lg border border-border p-3 text-sm">
+                      <span className="flex items-center gap-2 text-muted-foreground"><ShieldCheck className="h-4 w-4 text-primary" />Couverture</span>
+                      <strong className="text-primary">{taux}%</strong>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground">Patient non assuré.</p>
+              )}
             </CardContent>
           </Card>
 
@@ -175,7 +225,7 @@ export default function NouvelleFacturePage() {
               <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Résumé de caisse</p>
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between"><span className="text-muted-foreground">Brut</span><strong>{fmt(brut)}</strong></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Assurance ({taux}%)</span><strong className="text-emerald-600">-{fmt(assurance)}</strong></div>
+                {carte && <div className="flex justify-between"><span className="text-muted-foreground">Assurance ({taux}%)</span><strong className="text-emerald-600">-{fmt(assurance)}</strong></div>}
               </div>
               <div className="flex flex-col items-center rounded-xl border border-border bg-muted/40 py-4">
                 <p className="text-[10px] font-bold uppercase text-muted-foreground">Net à payer</p>
@@ -191,6 +241,12 @@ export default function NouvelleFacturePage() {
                   ))}
                 </div>
               </div>
+              {mode === 'Chèque' && (
+                <div className="grid gap-2">
+                  <Input placeholder="Numéro de chèque" value={numeroCheque} onChange={(e) => setNumeroCheque(e.target.value)} />
+                  <Input placeholder="Banque émettrice" value={banque} onChange={(e) => setBanque(e.target.value)} />
+                </div>
+              )}
               <div className="space-y-1.5">
                 <Label className="text-xs uppercase">Montant reçu</Label>
                 <Input className="no-arrows text-right text-lg font-medium" type="number" value={montantRecu} onChange={(e) => setMontantRecu(e.target.value)} placeholder="0" />
@@ -216,7 +272,7 @@ export default function NouvelleFacturePage() {
                   </div>
                 </div>
               )}
-              <Button variant="brand" className="w-full gap-2"><Lock className="h-4 w-4" />Valider et verrouiller</Button>
+              <Button variant="brand" className="w-full gap-2" onClick={valider} disabled={!!valideId}><Lock className="h-4 w-4" />Valider et verrouiller</Button>
               <Button variant="outline" className="w-full gap-2" onClick={() => printTicket(draft, rendu, monnaieRendue)}><Printer className="h-4 w-4" />Aperçu ticket</Button>
             </CardContent>
           </Card>

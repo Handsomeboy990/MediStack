@@ -1,9 +1,13 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Bell, LogOut, UserCircle2 } from 'lucide-react';
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select';
 
 import {
   Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent,
@@ -12,14 +16,25 @@ import {
   SidebarRail, SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { roleNavConfig, roleOrder, getCurrentRole } from '@/components/sidebar-nav-config';
+import { ensureRichDemoData } from '@/lib/demo-seed';
 
 function AppSidebar() {
+  const router = useRouter();
   const pathname = usePathname();
   const currentRole = getCurrentRole(pathname);
   const config = currentRole ? roleNavConfig[currentRole] : null;
+  const quickSpaces = [
+    { href: '/cashier-manager', label: 'Espace caisse (resp.)' },
+    { href: '/cashier', label: 'Espace caisse (agent)' },
+    { href: '/doctor', label: 'Espace médecin' },
+    { href: '/storekeeper', label: 'Espace magasin' },
+    { href: '/hr', label: 'Espace RH' },
+    { href: '/director', label: 'Espace Admin' },
+  ];
+  const selectedSpace = quickSpaces.find((s) => pathname.startsWith(s.href))?.href;
 
   return (
-    <Sidebar collapsible="icon" className="h-screen md:sticky md:top-0 bg-primary text-primary-foreground">
+    <Sidebar collapsible="icon" className="h-screen md:sticky md:top-0 bg-[hsl(var(--sidebar-background))] text-primary-foreground">
       <SidebarHeader className="border-b border-white/10 pb-4">
         <div className="flex items-center gap-3 px-1 pt-1">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white/20">
@@ -91,6 +106,24 @@ function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="border-t border-white/10 pt-4">
+        <div className="group-data-[state=collapsed]/sidebar:hidden mb-3 px-2">
+          <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-white/60">Changer d&apos;espace</p>
+          <Select
+            value={selectedSpace}
+            onValueChange={(next: string) => {
+              if (next && next !== selectedSpace) router.push(next);
+            }}
+          >
+            <SelectTrigger className="h-9 border-white/20 bg-white/10 text-white hover:bg-white/15 focus:ring-white/30">
+              <SelectValue placeholder="Sélectionner un espace" />
+            </SelectTrigger>
+            <SelectContent>
+              {quickSpaces.map((space) => (
+                <SelectItem key={space.href} value={space.href}>{space.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="flex items-center gap-3 rounded-xl px-2 py-2">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-xs font-bold text-white">
             U
@@ -108,6 +141,11 @@ function AppSidebar() {
 
 function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+
+  useEffect(() => {
+    ensureRichDemoData();
+  }, []);
+
   const appRoutesWithSidebar = ['/profil', '/notifications'];
   const showSidebar =
     roleOrder.some((r) => pathname.startsWith(r)) ||
